@@ -26,56 +26,66 @@ package MissionRequirements {
 	private import StakeholderConcerns::*;
 	    
 	// Mission Requirements Definition.
-    requirement def FleetProfitabilityRequirement { 
+    requirement def PilotProfitabilityRequirement { 
         doc /* A corporation in Eve Online shall guarantee a slightly over the average 
 		 * profitability in order to provide suficcient incentive to pilots to work
          * for the corporation.
 		 * This value is inferred from market analysis results outside of this model. 
          */      
         subject miningCorporation : MiningCorporation;
-        attribute profitabilityHS : Real;
-		attribute profitabilityLS : Real;
-		attribute profitabilityNS : Real;
-		attribute situationalAwarenessHS : Real;
-		attribute situationalAwarenessLS : Real;
-		attribute situationalAwarenessNS : Real;
-		attribute exposedEnvironentRiskHS : Real;
-		attribute exposedEnvironentRiskLS : Real;
-		attribute exposedEnvironentRiskNS : Real;
-		attribute highSecOreValue : Real;
-		attribute lowSecOreValue : Real;
-		attribute nullSecOreValue : Real;
-		assume constraint {situationalAwarenessHS = 1.0;}  //no need for operational security
-		assume constraint {situationalAwarenessLS = 0.6;}  //no need for scout fleet
-		assume constraint {situationalAwarenessLS = 0.4;}  //need in-system scout fleet
-		assume constraint {exposedEnvironentRiskHS = 98.0;}  //Very safe in high sec systems
-		assume constraint {exposedEnvironentRiskHS = 75.0;}  // Increased risk of ship loss
-		assume constraint {exposedEnvironentRiskNS = 50.0;}  // Very high risk, frequent losses
-		assume constraint {highSecOreValue : Real = 200.0;}   // ISK/m³ (e.g., Veldspar, Scordite)
-        require constraint {profitabilityHS >= 25000 } //ISK/hour
-		require constraint {profitabilityLS >= 35000 } //ISK/hour
-		require constraint {profitabilityNS >= 50000 } //ISK/hour
-        
+        attribute profitability : Real;
+		attribute situationalAwareness : Real;
+		attribute exposedEnvironentRisk : Real;
+		attribute OreValue : Real;	  
+    }
+
+	//Mission Requiremnts Specification
+
+	requirement missionRequirementsSpecification {
+		doc /*
+		* Mission Requirements Specification
+		*/
+		subject miningCorproration : MiningCorporation;
+
+		require pilotProfitabilityRequirementHS;
+		require pilotProfitabilityRequirementLS;
+		require pilotProfitabilityRequirementNS;
+	}
+
+    requirement <MR01> pilotProfitabilityRequirementHS : PilotProfitabilityRequirement {
+    	subject miningCorporation : MiningCorporation;
+    	attribute :>> profitability = miningCorporation.highSecMiningPilotPod.operationalMiningProfitability;
+		attribute :>> situationalAwareness = 1.0;
+		attribute :>> exposedEnvironentRisk = 98.0;
+		attribute :>> OreValue = 200.0;
+		require constraint {profitability >= 7000000.0 } //ISK/hour
+
 		//This requirement frames specifically the concerns here referred.
-        frame concern fleetProfitabilityConcern : FleetProfitabilityConcern{
-			:>> fleetProfitabilityHS = FleetProfitabilityRequirement::profitabilityHS;
-			:>> fleetProfitabilityLS = FleetProfitabilityRequirement::profitabilityLS;
-			:>> fleetProfitabilityNS = FleetProfitabilityRequirement::profitabilityNS;
-		}
-    }
-    requirement <MR01> fleetProfitabilityRequirementHS : FleetProfitabilityRequirement {
-    	subject alphaMiningCorporation;
-    	attribute :>> profitabilityHS = alphaMiningCorporation.minimumProfitHS;
+        frame PilotPodProfitabilityConcern;
     }
 
-	requirement <MR02> fleetProfitabilityRequirementLS : FleetProfitabilityRequirement {
-    	subject alphaMiningCorporation;
-    	attribute :>> profitabilityLS = alphaMiningCorporation.minimumProfitLS;
+	requirement <MR02> pilotProfitabilityRequirementLS : PilotProfitabilityRequirement {
+    	subject miningCorporation : MiningCorporation;
+    	attribute :>> profitability = miningCorporation.lowSecMiningPilotPod.operationalMiningProfitability;
+		attribute :>> situationalAwareness = 0.6;
+		attribute :>> exposedEnvironentRisk = 75.0;
+		attribute :>> OreValue = 500.0; 
+		require constraint {profitability >= 14000000.0   } //ISK/hour
+
+		//This requirement frames specifically the concerns here referred.
+        frame PilotPodProfitabilityConcern;
     }
 
-	requirement <MR03> fleetProfitabilityRequirementNS : FleetProfitabilityRequirement {
-    	subject alphaMiningCorporation;
-    	attribute :>> profitabilityNS = alphaMiningCorporation.minimumProfitNS;
+	requirement <MR03> pilotProfitabilityRequirementNS : PilotProfitabilityRequirement {
+    	subject miningCorporation : MiningCorporation;
+    	attribute :>> profitability = miningCorporation.nullSecMiningPilotPod.operationalMiningProfitability;
+		attribute :>> situationalAwareness = 0.4;
+		attribute :>> exposedEnvironentRisk = 50.0;
+		attribute :>> OreValue = 700.0; 
+		require constraint {profitability >= 20000000.0 } //ISK/hour
+
+		//This requirement frames specifically the concerns here referred.
+        frame PilotPodProfitabilityConcern;
     }	
 	//More requirements for the operational safety and the sustainment of operations ought to be defined.
 }

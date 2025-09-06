@@ -5,29 +5,28 @@ package causeEffect {
 
 	//The cause-effect relationships
 	//This section is not correctly parsed and needs further corrections
-	#causation connect domain.alphaMiningCorporation.highSecMiningPilotPod.miningRateIncreases to domain.asteroidBelt.asteroids.oreYieldIncreases;
-	#causation connect domain.alphaMiningCorporation.highSecMiningPilotPod.cargoCapacityIncreases to domain.alphaMiningCorporation.corpFleet.downtimeReduces;
-	#causation connect domain.alphaMiningCorporation.highSecMiningPilotPod.shieldStrengthIncreases to domain.alphaMiningCorporation.corpFleet.survivabilityEnhances;
-	#causation connect domain.alphaMiningCorporation.highSecMiningPilotPod.threatDetectionImproves to domain.alphaMiningCorporation.corpFleet.threatResponseImproves;
-	#causation connect domain.alphaMiningCorporation.highSecMiningPilotPod.droneOperationsImprove to domain.alphaMiningCorporation.corpFleet.operationalEfficiencyIncreases;
-	#causation connect domain.alphaMiningCorporation.highSecMiningPilotPod.warpSpeedIncreases to domain.alphaMiningCorporation.corpFleet.downtimeReduces;
-	#causation connect domain.alphaMiningCorporation.corpFleet.fleetCoordinationImproves to domain.alphaMiningCorporation.corpFleet.operationalEfficiencyIncreases;
+	#causation connect domain.miningCorporation.miningPilotPod.miningRateIncreases to domain.asteroidBelt.asteroids.oreYieldIncreases;
+	#causation connect domain.miningCorporation.miningPilotPod.cargoCapacityIncreases to domain.miningCorporation.corpFleet.downtimeReduces;
+	#causation connect domain.miningCorporation.miningPilotPod.shieldStrengthIncreases to domain.miningCorporation.corpFleet.survivabilityEnhances;
+	#causation connect domain.miningCorporation.miningPilotPod.threatDetectionImproves to domain.miningCorporation.corpFleet.threatResponseImproves;
+	#causation connect domain.miningCorporation.miningPilotPod.droneOperationsImprove to domain.miningCorporation.corpFleet.operationalEfficiencyIncreases;
+	#causation connect domain.miningCorporation.miningPilotPod.warpSpeedIncreases to domain.miningCorporation.corpFleet.downtimeReduces;
 	
 	#multicausation connection {
 	    end #cause ::> domain.asteroidBelt.asteroids.oreYieldIncreases;
-	    end #cause ::> domain.alphaMiningCorporation.corpFleet.downtimeReduces;
-	    end #effect ::> domain.alphaMiningCorporation.corpFleet.oreExtractionEfficiencyIncreases;
+	    end #cause ::> domain.miningCorporation.corpFleet.downtimeReduces;
+	    end #effect ::> domain.miningCorporation.corpFleet.oreExtractionEfficiencyIncreases;
 	}
 	
 	#multicausation connection {
-	    end #cause ::> domain.alphaMiningCorporation.corpFleet.survivabilityEnhances;
-	    end #cause ::> domain.alphaMiningCorporation.corpFleet.threatResponseImproves;
-	    end #effect ::> domain.alphaMiningCorporation.corpFleet.operationalEfficiencyIncreases;
+	    end #cause ::> domain.miningCorporation.corpFleet.survivabilityEnhances;
+	    end #cause ::> domain.miningCorporation.corpFleet.threatResponseImproves;
+	    end #effect ::> domain.miningCorporation.corpFleet.operationalEfficiencyIncreases;
 	}
 	
 	#multicausation connection {
-	    end #cause ::> domain.alphaMiningCorporation.corpFleet.operationalEfficiencyIncreases;
-	    end #cause ::> domain.alphaMiningCorporation.corpFleet.oreExtractionEfficiencyIncreases;
-	    end #effect ::> domain.alphaMiningCorporation.corpFleet.profitabilityMaximizes;
+	    end #cause ::> domain.miningCorporation.corpFleet.operationalEfficiencyIncreases;
+	    end #cause ::> domain.miningCorporation.corpFleet.oreExtractionEfficiencyIncreases;
+	    end #effect ::> domain.miningCorporation.corpFleet.profitabilityMaximizes;
 	}	
 }

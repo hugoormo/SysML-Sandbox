@@ -20,18 +20,18 @@
         attribute suppliedCpu :>> suppliedCpu default 240;  //Size of the CPU in theraflops (tf)
         // redefined attributes of a ship
         attribute maxVelocity :>> maxVelocity default 335.0;  //Maximum velocity (m/s)
-        #mop attribute warpSpeed :>> warpSpeed default 5.0; //AU/s, the warp speed of the frigate (STRQ06)
-        #mop attribute alignTime :>> alignTime default 5.99;  // seconds, the time required to align for warp (STRQ06)
-        #mop attribute structureStrength :>> structureStrength : Real default 200.0;  //Strength of the hull (STRQ03)
-        #mop attribute armorStrength :>> armorStrength : Real default 175.0; 
-        #mop attribute shieldStrength :>> shieldStrength : Real default 225.0;  //Strength of the shield (STRQ03)
+        attribute warpSpeed :>> warpSpeed default 5.0; //AU/s, the warp speed of the frigate (STRQ06)
+        attribute alignTime :>> alignTime default 5.99;  // seconds, the time required to align for warp (STRQ06)
+        attribute structureStrength :>> structureStrength : Real default 200.0;  //Strength of the hull (STRQ03)
+        attribute armorStrength :>> armorStrength : Real default 175.0; 
+        attribute shieldStrength :>> shieldStrength : Real default 225.0;  //Strength of the shield (STRQ03)
         attribute cargoHoldCapacity :>> cargoHoldCapacity : Real default 50;  // Maximum transport cargo capacity (m³)
-        #mop attribute warpCoreStrength :>> warpCoreStrength default 2;  //resilience to being immobilized    
+        attribute warpCoreStrength :>> warpCoreStrength default 2;  //resilience to being immobilized    
         // specific attributes of the mining frigate Venture class
-        #mop attribute oreHoldCapacity : Real default 5000.0;       // Maximum ore cargo capacity (m³)
-        #mop attribute droneCapacity : Real default 10;     // Drones cargo capacity (m³)
+        attribute oreHoldCapacity : Real default 5000.0;       // Maximum ore cargo capacity (m³)
+        attribute droneCapacity : Real default 10;     // Drones cargo capacity (m³)
         attribute oreHoldStatus : Real default 2;    // Capacity status of the ores hold
-        #mop attribute maxLockedTargets :>> maxLockedTargets default 5;   // Number, the maximum number of locked targets (STRQ07)
+        attribute maxLockedTargets :>> maxLockedTargets default 5;   // Number, the maximum number of locked targets (STRQ07)
         attribute magnetometricSensorStrength :>> sensorStrength default 4;  //ability to lock in a signature
         
         //Ports of the mining frigate redefine the imperial ship definition
@@ -170,23 +170,28 @@
         attribute :>> maxVelocity = 
             miningFrigateConfiguration.maxVelocity * 
             propulsionEnhancer.velocityBonus;  //Maximum velocity (m/s)
-        #mop attribute :>> warpSpeed;
-        #mop attribute :>> alignTime;
-        #mop attribute :>> structureStrength;
-        #mop attribute :>> armorStrength;
-        #mop attribute :>> shieldStrength;  //Strength of the shield (STRQ03)
+        attribute :>> warpSpeed;
+        attribute :>> alignTime;
+        attribute :>> structureStrength;
+        attribute :>> armorStrength;
+        attribute :>> shieldStrength;  //Strength of the shield (STRQ03)
         attribute :>> cargoHoldCapacity;
-        #mop attribute :>> warpCoreStrength;  
+        attribute :>> warpCoreStrength;  
         // specific attributes of the mining frigate Venture class
-        #mop attribute :>> oreHoldCapacity;
-        #mop attribute :>> droneCapacity;
+        attribute :>> oreHoldCapacity;
+        attribute :>> droneCapacity;
         attribute :>> oreHoldStatus;
-        #mop attribute :>> maxLockedTargets;
+        attribute :>> maxLockedTargets;
         attribute :>> magnetometricSensorStrength;
         // attributes inherited from mounted modules 
         #mop attribute miningRate : Real =          // Depends on COTS. Volume of ore mined per second (m³/s)
             minerModule1.miningYield / minerModule1.cycleTime + 
-            minerModule2.miningYield / minerModule2.cycleTime; 
+            minerModule2.miningYield / minerModule2.cycleTime;
+
+        //the mop is allocated to the corresponding moe
+        //some of all the responsibility for realizing the source moe is allocated to the here defined target mop
+        allocate domain.miningCorporation.highSecMiningPilotPod.operationalMiningRate 
+        to highSecMiningFrigate.miningRate;
 
         ref part minerModule1 redefines minerModule[1] = minerModule1::minerI{
             port highSlot redefines highSlot;
@@ -241,26 +246,30 @@
         attribute :>> maxVelocity = 
             miningFrigateConfiguration.maxVelocity * 
             propulsionEnhancer.velocityBonus;  //Maximum velocity (m/s)
-        #mop attribute :>> warpSpeed;
-        #mop attribute :>> alignTime;
-        #mop attribute :>> structureStrength;
-        #mop attribute :>> armorStrength;
-        #mop attribute :>> shieldStrength = 
+        attribute :>> warpSpeed;
+        attribute :>> alignTime;
+        attribute :>> structureStrength;
+        attribute :>> armorStrength;
+        attribute :>> shieldStrength = 
             miningFrigateConfiguration.shieldStrength * 
             shieldExtender.shieldHPBonus;  //Strength of the shield (STRQ03)
         attribute :>> cargoHoldCapacity;
-        #mop attribute :>> warpCoreStrength;  
+        attribute :>> warpCoreStrength;  
         // specific attributes of the mining frigate Venture class
-        #mop attribute :>> oreHoldCapacity;
-        #mop attribute :>> droneCapacity;
+        attribute :>> oreHoldCapacity;
+        attribute :>> droneCapacity;
         attribute :>> oreHoldStatus;
-        #mop attribute :>> maxLockedTargets;
+        attribute :>> maxLockedTargets;
         attribute :>> magnetometricSensorStrength;
         // attributes inherited from mounted modules 
         #mop attribute miningRate =          // Depends on COTS. Volume of ore mined per second (m³/s)
             minerModule1.miningYield / minerModule1.cycleTime + 
             minerModule2.miningYield / minerModule2.cycleTime; 
-    
+
+        //the mop is allocated to the corresponding moe
+        //some of all the responsibility for realizing the source moe is allocated to the here defined target mop
+        allocate domain.miningCorporation.lowSecMiningPilotPod.operationalMiningRate 
+        to lowSecMiningFrigate.miningRate;
 
         ref part minerModule1 redefines minerModule[1] = minerModule1::'Mining Laser Particle Bore Compact'{
             port highSlot redefines highSlot;
@@ -325,26 +334,30 @@
         attribute :>> maxVelocity = 
             miningFrigateConfiguration.maxVelocity + 
             propulsionEnhancer.velocityBonus;  //Maximum velocity (m/s)
-        #mop attribute :>> warpSpeed;
-        #mop attribute :>> alignTime;
-        #mop attribute :>> structureStrength;
-        #mop attribute :>> armorStrength;
-        #mop attribute :>> shieldStrength = 
+        attribute :>> warpSpeed;
+        attribute :>> alignTime;
+        attribute :>> structureStrength;
+        attribute :>> armorStrength;
+        attribute :>> shieldStrength = 
             miningFrigateConfiguration.shieldStrength + 
             shieldExtender.shieldHPBonus;  //Strength of the shield (STRQ03)
         attribute :>> cargoHoldCapacity;
-        #mop attribute :>> warpCoreStrength;    
+        attribute :>> warpCoreStrength;    
         // specific attributes of the mining frigate Venture class
-        #mop attribute :>> oreHoldCapacity;
-        #mop attribute :>> droneCapacity;
+        attribute :>> oreHoldCapacity;
+        attribute :>> droneCapacity;
         attribute :>> oreHoldStatus;
-        #mop attribute :>> maxLockedTargets;
+        attribute :>> maxLockedTargets;
         attribute :>> magnetometricSensorStrength;
         // attributes inherited from mounted modules 
         #mop attribute miningRate =          // Depends on COTS. Volume of ore mined per second (m³/s)
             minerModule1.miningYield / minerModule1.cycleTime + 
             minerModule2.miningYield / minerModule2.cycleTime; 
     
+        //the mop is allocated to the corresponding moe
+        //some of all the responsibility for realizing the source moe is allocated to the here defined target mop
+        allocate domain.miningCorporation.nullSecMiningPilotPod.operationalMiningRate 
+        to nullSecMiningFrigate.miningRate;
 
         ref part minerModule1 redefines minerModule[1] = minerModule1::'Mining Laser EP-S Gaussian Scoped'{
             port highSlot redefines highSlot;

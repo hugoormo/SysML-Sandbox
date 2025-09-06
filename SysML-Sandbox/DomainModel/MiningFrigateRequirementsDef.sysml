@@ -58,7 +58,7 @@ package MiningFrigateRequirementsDef {
     requirement def <MFRQ07> MiningTargetRequirement {
         doc /* The Mining Frigate shall lock and mine up to 3 asteroid targets simultaneously. */
         subject miningFrigate : MiningFrigateVentureClass;
-        require constraint { domain.alphaMiningCorporation.highSecMiningPilotPod.highSecCorpMiningFrigate.maxLockedTargets >= 3 } // Maximum asteroid targets
+        require constraint { domain.miningCorporation.highSecMiningPilotPod.highSecCorpMiningFrigate.maxLockedTargets >= 3 } // Maximum asteroid targets
         
         frame concern OreYieldConcern;
     }
