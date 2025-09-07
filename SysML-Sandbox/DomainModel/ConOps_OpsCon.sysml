@@ -21,6 +21,8 @@ package ConOps {
 }
 package MissionRequirements {
 	
+	private import CelestialsAndStructures::*;
+	private import StdPortsAndInterfaces::*;
 	private import DomainPackage::*;
 	private import ScalarValues::*;
 	private import StakeholderConcerns::*;
@@ -102,7 +104,7 @@ package OperationalConcept {
 	
 	//Use cases are used to define the OpsCon.
 	use case def HighSecMiningMission {  
-		subject minerPilotPod : PilotPod [1..8] {
+		subject minerPilotPod : PilotPodsAndSpaceships::PilotPod [1..8] {
 			event occurrence targetAsteroidBeltReceived [1];
 			then perform action warpToCelestialOperationalProcedure;  
             event occurrence targetAsteroidReceived [1..5] ordered;
@@ -114,7 +116,7 @@ package OperationalConcept {
 			perform action deployDefenseDrones;
             then event occurrence canOutSend; //the pilot releases a container (can) loaded with ore.
         }
-		actor miningfleetCommander : PilotPod {
+		actor miningfleetCommander : PilotPodsAndSpaceships::PilotPod {
 			event occurrence targetAsteroidBeltSent [1];
             event occurrence targetAsteroidSent [1..5] ordered;
 			event occurrence threatDetectedReceived;
@@ -123,16 +125,16 @@ package OperationalConcept {
 			event occurrence transportHoldFullReceived;
 			event occurrence transportReturnSent;
 		}
-		actor logisticsPilotPod : PilotPod[1]{
+		actor logisticsPilotPod : PilotPodsAndSpaceships::PilotPod[1]{
 			event occurrence canOutReceived [1..*];
 			then perform action beamCanOperationalProcedure [1..*] ordered;		
 			then occurrence transportHoldFullSent;
 			event occurrence transportReturnReceived;
 			then perform action unloadAndReturnOperationalProcedure;
 		}
-        actor asteroidBelt : AsteroidBelt; 
+        actor asteroidBelt : CelestialsAndStructures::AsteroidBelt; 
 		//the asteroid is part of the asteroid belt but in the context of the use case they are not "acting" in the same timeslice.
-        actor asteroid : Asteroid [1..*] {
+        actor asteroid : CelestialsAndStructures::Asteroid [1..*] {
             event occurrence asteroidDeintegrationSend;
             then event occurrence asteroidDepletionSend;
         }       
@@ -145,13 +147,13 @@ package OperationalConcept {
                 */
         }
 
-        message of ShipComms from miningfleetCommander.targetAsteroidBeltSent to minerPilotPod.targetAsteroidBeltReceived; 
-        then message of ShipComms from miningfleetCommander.targetAsteroidSent to minerPilotPod.targetAsteroidReceived;
-        message of ShipComms from minerPilotPod.threatDetectedSent to miningfleetCommander.threatDetectedReceived;
-        message of ShipComms from miningfleetCommander.threatNeutralizeSent to minerPilotPod.threatNeutralizeReceived;
-        message of ShipComms from minerPilotPod.canOutSend to logisticsPilotPod.canOutReceived;
-		message of ShipComms from logisticsPilotPod.transportHoldFullSent to miningfleetCommander.transportHoldFullReceived;
-		message of ShipComms from miningfleetCommander.transportReturnSent to logisticsPilotPod.transportReturnReceived;
+        message of StdPortsAndInterfaces::ShipComms from miningfleetCommander.targetAsteroidBeltSent to minerPilotPod.targetAsteroidBeltReceived; 
+        then message of StdPortsAndInterfaces::ShipComms from miningfleetCommander.targetAsteroidSent to minerPilotPod.targetAsteroidReceived;
+        message of StdPortsAndInterfaces::ShipComms from minerPilotPod.threatDetectedSent to miningfleetCommander.threatDetectedReceived;
+        message of StdPortsAndInterfaces::ShipComms from miningfleetCommander.threatNeutralizeSent to minerPilotPod.threatNeutralizeReceived;
+        message of StdPortsAndInterfaces::ShipComms from minerPilotPod.canOutSend to logisticsPilotPod.canOutReceived;
+		message of StdPortsAndInterfaces::ShipComms from logisticsPilotPod.transportHoldFullSent to miningfleetCommander.transportHoldFullReceived;
+		message of StdPortsAndInterfaces::ShipComms from miningfleetCommander.transportReturnSent to logisticsPilotPod.transportReturnReceived;
 	}
 	
 	//other use cases would be required for Low Sec, Null Sec and W-Space.

@@ -49,6 +49,17 @@
         port podPort :>> podPort;
         port dockingPort :>> dockingPort;
         port droneControl : DroneControllerPort[2];
+        port shieldMitigationPort :>> shieldMitigationPort;
+        port armourMitigationPort :>> armourMitigationPort;
+        port structureMitigationPort :>> structureMitigationPort;
+        port longRangeDirectionalSensorAntenna :>> longRangeDirectionalSensorAntenna : LongRangeSensorDirectionalAntenna, GravimetricAntenna;
+        port gridSensorAntenna :>> gridSensorAntenna : GridSensorAntenna, GravimetricAntenna;
+        port shipComms :>> shipComms;
+        port warpShield :>> warpShield;
+        port propulsionDisruption :>> propulsionDisruption;
+        port propulsionZ :>> propulsionZ[4];
+        port propulsionX :>> propulsionX[1..*];
+        port propulsionY :>> propulsionY[1..*];
 
         state miningFrigateStates :>> states {
             

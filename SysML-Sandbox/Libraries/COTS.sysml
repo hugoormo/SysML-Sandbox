@@ -3,6 +3,7 @@
  	private import ScalarValues::*;
  	private import StdPortsAndInterfaces::*;
  	private import RollupAnalysis::*;
+    private import COTS::*;
  	
     //COTS Imperial Standard Ship
     abstract part def ImperialStandardShip :> CompositeSpaceshipComponent {
@@ -38,12 +39,28 @@
         attribute maxLockedTargets : Integer;
         attribute sensorStrength : Integer;
 
+        //Modules and rigs extension ports
         port highPowerSlot : HighSlotPort[1..8];
         port midPowerSlot : MediumSlotPort[1..5];
         port lowPowerSlot : LowSlotPort[1..8];
         port rigPort : RigPort[3];
         port podPort : ~PodPort[1];
         port dockingPort : ~DockingPort[1];
+
+        //Ship Interaction ports
+        port shieldMitigationPort : ~ThreatPort;
+        port armourMitigationPort : ~ThreatPort;
+        port structureMitigationPort : ~ThreatPort;
+        port longRangeDirectionalSensorAntenna : LongRangeSensorDirectionalAntenna;
+        port gridSensorAntenna : GridSensorAntenna;
+        port shipComms : ShipCommsPort;
+        port propulsionZ : MainPropulsion[1..*];
+        port propulsionX : DirectionalPropulsion[1..*];
+        port propulsionY : DirectionalPropulsion[1..*];
+
+        //Ship resilience interactions
+        port warpShield : WarpDriveDisruptionShield;
+        port propulsionDisruption : PropulsionDisruption;
 
         state states {
 
@@ -150,7 +167,7 @@
         attribute type: String;
     }
  
-    // COTS Module Definitions with Conjugated Ports**   
+    //COTS Modules Definitions 
     abstract part def MinerModule :> ImperialStandardComponent{
         doc /* Standard mining laser used on mining frigates for ore extraction. */
         attribute miningYield : Real;
@@ -270,5 +287,13 @@
         * can be useful for drone ships and ships with nothing else to fit in their spare highslots. */
 
         port highSlot : ~HighSlotPort;
+    }
+
+    //COTS Drones
+    part def Drone {
+        attribute type : String;
+        attribute size : String;
+        port droneControlPort: DroneControllerPort;
+        port droneThreatPort : ThreatPort;
     }
 }

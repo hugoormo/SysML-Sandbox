@@ -1,9 +1,12 @@
 package SystemUseCases {
 
     // Import the Domain package for referencing actors
+    private import CelestialsAndStructures::*;
     private import DomainPackage::*;
     private import ScalarValues::*;
     private import StdPortsAndInterfaces::*;
+    private import COTS::*;
+    private import PilotPodsAndSpaceships::*;
 
     //Use Cases of the Mining Frigate. 
     //Define the operational sequence of interactions between the system of interest and the actors
