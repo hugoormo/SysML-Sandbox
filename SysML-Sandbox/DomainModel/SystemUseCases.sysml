@@ -4,7 +4,7 @@ package SystemUseCases {
     private import CelestialsAndStructures::*;
     private import DomainPackage::*;
     private import ScalarValues::*;
-    private import StdPortsAndInterfaces::*;
+    private import StdPortsAndInterfaces::ImperialTechnology::*;
     private import COTS::*;
     private import PilotPodsAndSpaceships::*;
 
@@ -16,7 +16,7 @@ package SystemUseCases {
     use case def MineAsteroids {
         subject highSecMiningFrigate ::> MiningFrigatePackage::highSecMiningFrigate {
             perform action activateMiningLaser [2] {
-                accept ActivateMiningLaserCommand via pilotPod;
+                accept ActivateMiningLaserCommand;
                 then action reportOreHoldStatus {out shipReport : String;}
                 if highSecMiningFrigate.cargoHoldStatus == 1 {
                     send ShipCommand(reportOreHoldStatus.shipReport) to pilotPod; //Mining report
@@ -118,7 +118,7 @@ package SystemUseCases {
         subject highSecMiningFrigate ::> MiningFrigatePackage::highSecMiningFrigate {
             event occurrence dockToStationReceived;
             then perform action approachSignature {
-                accept ApproachSignatureCommand via pilotPod;
+                accept ApproachSignatureAtRangeCommand;
                 //more actions will come here
                 then action reportStatusApproach {out shipReport : String;}
                 then send ShipCommand(reportStatusApproach.shipReport) to pilotPod;//Approach in progress
@@ -126,7 +126,7 @@ package SystemUseCases {
             then perform action dockInStation {
                 action requestDockingClearance {out ShipReport : String;}
                 then send ShipCommand(requestDockingClearance.ShipReport) to station;
-                then accept DockingRequestAccepted via station;
+                then accept DockingRequestAccepted;
                 //more actions will come here
                 then action reportRequestAccepted {out shipReport : String;}
                 then send ShipCommand(reportRequestAccepted.shipReport) to pilotPod;//Approach in progress 
@@ -163,7 +163,7 @@ package SystemUseCases {
         subject highSecMiningFrigate ::> MiningFrigatePackage::highSecMiningFrigate {        
             event occurrence celestialSignatureReceived;
             perform action executeWarpDrive {
-                accept ExecuteWarpDriveCommand via pilotPod;
+                accept ExecuteWarpDriveCommand;
                 //more actions will come here
                 then action reportStatusWarpDrive {out shipReport : String;}
                 then send ShipCommand(reportStatusWarpDrive.shipReport) to pilotPod; //warpDrive engaged
@@ -197,7 +197,7 @@ package SystemUseCases {
         subject highSecMiningFrigate ::> MiningFrigatePackage::highSecMiningFrigate {
             event occurrence asteroidSignatureReceived;
             perform action approachSignature {
-                accept ApproachSignatureCommand via pilotPod;
+                accept ApproachSignatureAtRangeCommand;
                 //more actions will come here
                 then action reportStatusApproach {out shipReport : String;}
                 then send ShipCommand(reportStatusApproach.shipReport) to pilotPod;//Approach in progress

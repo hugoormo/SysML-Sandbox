@@ -4,7 +4,7 @@ package DomainPackage {
 	private import ISQ::*;
 	private import SI::*;
 	private import ParametersOfInterestMetadata::*;
-    private import StdPortsAndInterfaces::*;
+    private import StdPortsAndInterfaces::ImperialTechnology::*;
     private import CelestialsAndStructures::*;
     private import PilotPodsAndSpaceships::*;
 	private import MiningFrigatePackage::*;
@@ -153,49 +153,6 @@ package DomainPackage {
         end asteroidOrePort : AsteroidOrePort;
         flow of Ore from asteroidOrePort.ore to shipOrePort.ore;     
     }      
-    
-    // Items that Flow Between Domain Objects 
-    //Ship Commands 
-    item def  ActivateMiningLaserCommand :> ShipCommand;
-    
-    item def  ScanForThreatsCommand :> ShipCommand; 
-    
-    item def  ExecuteWarpDriveCommand :> ShipCommand{
-        attribute signatureCelestial : CelestialSignature;
-        attribute warpToDistance : Integer;
-    }
-    
-    item def  SelectDronesForDeploymentCommand :> ShipCommand;
-    
-    item def  ApproachSignatureCommand :> ShipCommand {
-        attribute signatureGrid : GridSignature;
-        attribute approachToDistance : Integer;
-    }
-    
-    item def  EngagePropulsionCommand :> ShipCommand {
-        attribute TrottlePercentage : Integer;
-    }
-    
-    item def  DetectThreatCommand :> ShipCommand;
-    
-    item def  EngageDefensesCommand :> ShipCommand{
-        attribute signatureGrid : GridSignature;
-    }
-    
-    item def  DockToStation :> ShipCommand {
-        attribute signatureCelestial : CelestialSignature;
-    }
-    
-    //Station Commands
-    item def UndockFromStationCommand :> StationCommand;
-    item def TransferOreCommand :> StationCommand;
-    item def DockingRequestAccepted :> StationCommand;  
-    
-    //Ship Information Items
-    item def Course {
-        attribute waypoints: String;
-        attribute distance: Real;
-    }
     
     package ViewsAndViewsDefinition {
         //Views and views definition

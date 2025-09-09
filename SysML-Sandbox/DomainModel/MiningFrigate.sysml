@@ -7,7 +7,9 @@
 	private import DomainPackage::*;
     private import StakeholderConcerns::*;
     private import COTS::*;
-    private import StdPortsAndInterfaces::*;
+    private import StdPortsAndInterfaces::ImperialTechnology::*;
+    private import StdPortsAndInterfaces::GallenteTechnology::*;
+    private import PilotPodsAndSpaceships::*;
     private import SystemUseCases::*;
 
     //Mining Frigate (System-of-Interest) without enhancements (Non-Configured)
@@ -33,10 +35,12 @@
         attribute oreHoldStatus : Real default 2;    // Capacity status of the ores hold
         attribute maxLockedTargets :>> maxLockedTargets default 5;   // Number, the maximum number of locked targets (STRQ07)
         attribute magnetometricSensorStrength :>> sensorStrength default 4;  //ability to lock in a signature
+        #mop attribute yieldBonus : Real = 1;
         
         //Ports of the mining frigate redefine the imperial ship definition
         port highPowerSlot1 :>> highPowerSlot[1];
         port highPowerSlot2 :>> highPowerSlot[1];
+        port highPowerSlot3 :>> highPowerSlot[1];
         port midPowerSlot1 :>> midPowerSlot[1];
         port midPowerSlot2 :>> midPowerSlot[1];
         port midPowerSlot3 :>> midPowerSlot[1];
@@ -49,17 +53,19 @@
         port podPort :>> podPort;
         port dockingPort :>> dockingPort;
         port droneControl : DroneControllerPort[2];
-        port shieldMitigationPort :>> shieldMitigationPort;
-        port armourMitigationPort :>> armourMitigationPort;
-        port structureMitigationPort :>> structureMitigationPort;
         port longRangeDirectionalSensorAntenna :>> longRangeDirectionalSensorAntenna : LongRangeSensorDirectionalAntenna, GravimetricAntenna;
         port gridSensorAntenna :>> gridSensorAntenna : GridSensorAntenna, GravimetricAntenna;
         port shipComms :>> shipComms;
-        port warpShield :>> warpShield;
-        port propulsionDisruption :>> propulsionDisruption;
-        port propulsionZ :>> propulsionZ[4];
-        port propulsionX :>> propulsionX[1..*];
-        port propulsionY :>> propulsionY[1..*];
+        port zPropulsion :>> zPropulsion[4];
+        port xPropulsion :>> xPropulsion[2];
+        port yPropulsion :>> yPropulsion[2];
+        //Ship resilience ports
+        port warpShield :>> warpShield {
+            attribute :>> warpShielding = 2;  //The VentureClass has a built-in shielding
+        }
+        port shieldMitigationPort :>> shieldMitigationPort;
+        port armourMitigationPort :>> armourMitigationPort;
+        port structureMitigationPort :>> structureMitigationPort;
 
         state miningFrigateStates :>> states {
             
@@ -69,14 +75,14 @@
             } 	
             state Boarded :>> Boarded {
                 doc /* The mining frigate is boarded inside a station in the docking pad, available for refitting, resupply, or cargo transfer. */
+                exit action ::> undockFromStation;
             }
             state InGrid :>> InGrid {
                 doc /* The mining frigate is in open space, near asteroids, stations, or other celestial objects. */
-                entry action undockFromStation;
             }
             state OnWarp :>> OnWarp {
                 doc /* The mining frigate is in warp, traveling between locations. */
-                entry action executeWarpDrive;
+                entry action ::> initializeGridServices.executeWarpDrive;
             }        
             
             transition miningFrigate_parked_to_boarded
@@ -92,7 +98,7 @@
             transition miningFrigate_boarded_to_inGrid
                 first Boarded
                 accept pilotPodUndockCommandSig : ShipCommand via podPort
-                do action initializeGridServicesMiningFrigate
+                do action ::> initializeGridServices
                 then InGrid;  		
                 
             transition miningFrigate_inGrid_to_docked
@@ -111,53 +117,60 @@
                 then InGrid;  
         } 
 
-        action initializeGridServicesMiningFrigate :>> initializeGridServices {
+        action :>> initializeGridServices {
             doc /*This action initializes the spaceship for the operational services in grid.
                     * The actions do not end of themselves but will be terminated by the transition on the state. 
                     */
             first start;
             then fork;
-                then scanSpaceMiningFrigate;
-                then approachSignatureMiningFrigate;
-                then deployDefenseDronesMiningFrigate;
-                then dockInStationMiningFrigate;
-                then executeWarpDriveMiningFrigate;
-                then updateSystemConfigurationMiningFrigate;
+                then initializeScanSpaceServices;
+                then initializeNavigationServices;
+                then dockInStation;
+                then initializeDrones;
+                then initializeExtensionModulesAndRigs;
 
-            action deployDefenseDronesMiningFrigate { //the Mining Frigate hull has a built in drone bay with drone functionality. 
-                doc /*Activate defense turrets and deploy drones to neutralize threats.*/   
+            action :>> initializeScanSpaceServices;
+            action :>> initializeNavigationServices;
+            action :>> dockInStation;
+            action :>> executeWarpDrive;
+            action initializeDrones {
+                //more actions will come here
             }
-            action scanSpaceMiningFrigate :>> scanSpace {
-                doc /* Scan the grid and range space for potential threats. */
-            }
-
-            action approachSignatureMiningFrigate :>> approachSignature {
-                doc /*Approach a signature using the navigation system.*/
-            }
-            
-            action dockInStationMiningFrigate :>> dockInStation {
-                doc /*Dock into a station to make repairs, resupply capacitor and support systems.*/
-            }
-            
-            action executeWarpDriveMiningFrigate :>> executeWarpDrive {
-                doc /* Engage the warp drive to travel to the destination. */
-            }
-
-            action updateSystemConfigurationMiningFrigate :>> updateSystemConfiguration {
+            action :>> initializeExtensionModulesAndRigs {
                 doc /* 
                     * Activates all service modules in a configured ship
                     * Record all installed modules in the configuration of the system and enables them 
                     */
+                first start;
+                then fork;
+                    then initializeHighPowerModule1;
+                    then initializeHighPowerModule2;
+                    then initializeHighPowerModule3;
+                    then initializeMediumPowerModule1;
+                    then initializeMediumPowerModule2;
+                    then initializeMediumPowerModule3;
+                    then initializeLowPowerModule1;
+                    then initializeRig1;
+                    then initializeRig2;
+                    then initializeRig3;
+
+                action initializeHighPowerModule1;
+                action initializeHighPowerModule2;
+                action initializeHighPowerModule3;
+                action initializeMediumPowerModule1;
+                action initializeMediumPowerModule2;
+                action initializeMediumPowerModule3;
+                action initializeLowPowerModule1;
+                action initializeRig1;
+                action initializeRig2;
+                action initializeRig3; 
             }    
         }
-
-        action transferOreMiningFrigate { //the Mining Frigate hull has a built in ore hold with transfer functionality. 
-            doc /*Transfer Ores from the ore hold in the frigate to the station warehouse*/   
+        action transferOre { //the Mining Frigate hull has a built in ore hold with transfer functionality. 
+            doc /*Transfer Ores from the ore hold in the frigate to the station warehouse*/
+            //more actions will come here  
         }
-
-        action undockFromStationMiningFrigate :>> undockFromStation {
-            doc /*Undock from a station.*/
-        }
+        action :>> undockFromStation; //more actions will come here
     }
 
     abstract part miningFrigateConfiguration : MiningFrigateVentureClass {
@@ -194,10 +207,11 @@
         attribute :>> oreHoldStatus;
         attribute :>> maxLockedTargets;
         attribute :>> magnetometricSensorStrength;
+        attribute :>> yieldBonus;
         // attributes inherited from mounted modules 
         #mop attribute miningRate : Real =          // Depends on COTS. Volume of ore mined per second (m³/s)
-            minerModule1.miningYield / minerModule1.cycleTime + 
-            minerModule2.miningYield / minerModule2.cycleTime;
+            minerModule1.miningYield * (1 + yieldBonus)  / minerModule1.cycleTime + 
+            minerModule2.miningYield * (1 + yieldBonus) / minerModule2.cycleTime;
 
         //the mop is allocated to the corresponding moe
         //some of all the responsibility for realizing the source moe is allocated to the here defined target mop
@@ -236,13 +250,38 @@
             hullPort ::> highSecMiningFrigate.lowPowerSlot1 to
 	        modulePort ::> propulsionEnhancer.lowSlot;
     
-        action initializeGridServicesMiningFrigate :>> initializeGridServicesMiningFrigate { 
-            action updateSystemConfigurationMiningFrigate :>> updateSystemConfigurationMiningFrigate {
+        action initializeGridServicesMiningFrigate :>> initializeGridServices { 
+            action :>> initializeExtensionModulesAndRigs {
                 //these are call to actions referenced from the COTS
-                perform action extractOreMinerLaser1 ::> minerModule1.extractOre;
-                then perform action extractOreMinerLaser2 ::> minerModule2.extractOre;
-                then perform action boostSpeed ::> propulsionEnhancer.boostSpeed;
+
+                    action :>> initializeHighPowerModule1 { 
+                        accept ActivateMiningLaserCommand;
+                        then perform action extractOreMinerLaser1 ::> minerModule1.extractOre;
+                        then action reportOreHoldStatus {out shipReport : String;}
+                        if highSecMiningFrigate.cargoHoldStatus == 1 {
+                            send ShipCommand(reportOreHoldStatus.shipReport) via podPort; //Mining report
+                            then done;} //ore hold is full, interrupt mining.
+                        //more actions will come here
+                        then action reportStatusMining {out shipReport : String;}
+                        then send ShipCommand(reportStatusMining.shipReport) via podPort; //Mining report
+                    }
+                    action :>> initializeHighPowerModule2 { 
+                        accept ActivateMiningLaserCommand;
+                        then perform action extractOreMinerLaser1 ::> minerModule2.extractOre;
+                        then action reportOreHoldStatus {out shipReport : String;}
+                        if highSecMiningFrigate.cargoHoldStatus == 1 {
+                            send ShipCommand(reportOreHoldStatus.shipReport) via podPort; //Mining report
+                            then done;} //ore hold is full, interrupt mining.
+                        //more actions will come here
+                        then action reportStatusMining {out shipReport : String;}
+                        then send ShipCommand(reportStatusMining.shipReport) via podPort; //Mining report
+                    }
+                    action :>> initializeLowPowerModule1 {
+                        accept EngagePropulsionCommand;
+                        perform action boostSpeed ::> propulsionEnhancer.boostSpeed;
+                    }
             }
+        
         }
     } 
     
@@ -272,10 +311,11 @@
         attribute :>> oreHoldStatus;
         attribute :>> maxLockedTargets;
         attribute :>> magnetometricSensorStrength;
+        attribute :>> yieldBonus;
         // attributes inherited from mounted modules 
-        #mop attribute miningRate =          // Depends on COTS. Volume of ore mined per second (m³/s)
-            minerModule1.miningYield / minerModule1.cycleTime + 
-            minerModule2.miningYield / minerModule2.cycleTime; 
+        #mop attribute miningRate : Real =          // Depends on COTS. Volume of ore mined per second (m³/s)
+            minerModule1.miningYield * (1 + yieldBonus)  / minerModule1.cycleTime + 
+            minerModule2.miningYield * (1 + yieldBonus) / minerModule2.cycleTime; 
 
         //the mop is allocated to the corresponding moe
         //some of all the responsibility for realizing the source moe is allocated to the here defined target mop
@@ -321,13 +361,40 @@
             hullPort ::> lowSecMiningFrigate.lowPowerSlot1 to
 	        modulePort ::> propulsionEnhancer.lowSlot;
     
-        action initializeGridServicesMiningFrigate :>> initializeGridServicesMiningFrigate { 
-            action updateSystemConfigurationMiningFrigate :>> updateSystemConfigurationMiningFrigate {
+        action initializeGridServicesMiningFrigate :>> initializeGridServices { 
+            action :>> initializeExtensionModulesAndRigs {
                 //these are call to actions referenced from the COTS
-                perform action extractOreMinerLaser1 ::> minerModule1.extractOre;
-                then perform action extractOreMinerLaser2 ::> minerModule2.extractOre;
-                then perform action boostSpeed ::> propulsionEnhancer.boostSpeed;
-                then perform action extendShield ::> shieldExtender.extendShield;
+
+                    action :>> initializeHighPowerModule1 { 
+                        accept ActivateMiningLaserCommand;
+                        then perform action extractOreMinerLaser1 ::> minerModule1.extractOre;
+                        then action reportOreHoldStatus {out shipReport : String;}
+                        if highSecMiningFrigate.cargoHoldStatus == 1 {
+                            send ShipCommand(reportOreHoldStatus.shipReport) via podPort; //Mining report
+                            then done;} //ore hold is full, interrupt mining.
+                        //more actions will come here
+                        then action reportStatusMining {out shipReport : String;}
+                        then send ShipCommand(reportStatusMining.shipReport) via podPort; //Mining report
+                    }
+                    action :>> initializeHighPowerModule2 { 
+                        accept ActivateMiningLaserCommand;
+                        then perform action extractOreMinerLaser1 ::> minerModule2.extractOre;
+                        then action reportOreHoldStatus {out shipReport : String;}
+                        if highSecMiningFrigate.cargoHoldStatus == 1 {
+                            send ShipCommand(reportOreHoldStatus.shipReport) via podPort; //Mining report
+                            then done;} //ore hold is full, interrupt mining.
+                        //more actions will come here
+                        then action reportStatusMining {out shipReport : String;}
+                        then send ShipCommand(reportStatusMining.shipReport) via podPort; //Mining report
+                    }
+                    action :>> initializeLowPowerModule1 {
+                        accept EngagePropulsionCommand;
+                        perform action boostSpeed ::> propulsionEnhancer.boostSpeed;
+                    }
+                    action :>> initializeMediumPowerModule1 { 
+                        //this is a passive module that does not need to be activated by the pilot
+                        perform action extendShield ::> shieldExtender.extendShield;
+                    }
             }
         }
     } 
@@ -360,10 +427,11 @@
         attribute :>> oreHoldStatus;
         attribute :>> maxLockedTargets;
         attribute :>> magnetometricSensorStrength;
+        attribute :>> yieldBonus;
         // attributes inherited from mounted modules 
-        #mop attribute miningRate =          // Depends on COTS. Volume of ore mined per second (m³/s)
-            minerModule1.miningYield / minerModule1.cycleTime + 
-            minerModule2.miningYield / minerModule2.cycleTime; 
+        #mop attribute miningRate : Real =          // Depends on COTS. Volume of ore mined per second (m³/s)
+            minerModule1.miningYield * (1 + yieldBonus)  / minerModule1.cycleTime + 
+            minerModule2.miningYield * (1 + yieldBonus) / minerModule2.cycleTime; 
     
         //the mop is allocated to the corresponding moe
         //some of all the responsibility for realizing the source moe is allocated to the here defined target mop
@@ -423,35 +491,70 @@
             hullPort ::> nullSecMiningFrigate.lowPowerSlot1 to
 	        modulePort ::> propulsionEnhancer.lowSlot;
         
-        action initializeGridServicesMiningFrigate :>> initializeGridServicesMiningFrigate { 
-            action updateSystemConfigurationMiningFrigate :>> updateSystemConfigurationMiningFrigate {
+        action initializeGridServicesMiningFrigate :>> initializeGridServices { 
+            action :>> initializeExtensionModulesAndRigs {
                 //these are call to actions referenced from the COTS
-                perform action extractOreMinerLaser1 ::> minerModule1.extractOre;
-                then perform action extractOreMinerLaser2 ::> minerModule2.extractOre;
-                then perform action boostSpeed ::> propulsionEnhancer.boostSpeed;
-                then perform action extendShield ::> shieldExtender.extendShield;
-                then perform action scanAsteroid ::> surveyScanner.scanAsteroid;
+
+                    action :>> initializeHighPowerModule1 { 
+                        accept ActivateMiningLaserCommand;
+                        then perform action extractOreMinerLaser1 ::> minerModule1.extractOre;
+                        then action reportOreHoldStatus {out shipReport : String;}
+                        if highSecMiningFrigate.cargoHoldStatus == 1 {
+                            send ShipCommand(reportOreHoldStatus.shipReport) via podPort; //Mining report
+                            then done;} //ore hold is full, interrupt mining.
+                        //more actions will come here
+                        then action reportStatusMining {out shipReport : String;}
+                        then send ShipCommand(reportStatusMining.shipReport) via podPort; //Mining report
+                    }
+                    action :>> initializeHighPowerModule2 { 
+                        accept ActivateMiningLaserCommand;
+                        then perform action extractOreMinerLaser1 ::> minerModule2.extractOre;
+                        then action reportOreHoldStatus {out shipReport : String;}
+                        if highSecMiningFrigate.cargoHoldStatus == 1 {
+                            send ShipCommand(reportOreHoldStatus.shipReport) via podPort; //Mining report
+                            then done;} //ore hold is full, interrupt mining.
+                        then action reportStatusMining {out shipReport : String;}
+                        then send ShipCommand(reportStatusMining.shipReport) via podPort; //Mining report
+                    }
+                    action :>> initializeLowPowerModule1 {
+                        accept EngagePropulsionCommand;
+                        then perform action boostSpeed ::> propulsionEnhancer.boostSpeed;
+                    }
+                    action :>> initializeMediumPowerModule1 { 
+                        //this is a passive module that does not need to be activated by the pilot
+                        perform action extendShield ::> shieldExtender.extendShield;
+                    }
+                    action :>> initializeMediumPowerModule2 {
+                        accept ActivateAsteroidScanner;
+                        then perform action scanAsteroid {out surveyReport : ModuleReport;} ::> surveyScanner.scanAsteroid;
+                        flow scanAsteroid.surveyReport to reportStatusMining.surveyReport; 
+                        then action reportStatusMining {in surveyReport : ModuleReport; out shipReport : String;}
+                        then send ShipCommand(reportStatusMining.shipReport) via podPort; //Mining report
+                    }
             }
+            
         }
     }
 
     //trace the activities identified in the Operational Use Cases with the activities defined at the Mining Frigate Blackbox.
     //A dependency states that the "from end" of the dependency needs the "to end" to be specified.
-    dependency highSecMiningFrigate::initializeGridServicesMiningFrigate::updateSystemConfigurationMiningFrigate 
+    dependency highSecMiningFrigate::initializeGridServicesMiningFrigate::initializeExtensionModulesAndRigs::initializeHighPowerModule1 
         to SystemUseCases::MineAsteroids::highSecMiningFrigate::activateMiningLaser;
-    dependency highSecMiningFrigate::initializeGridServicesMiningFrigate::scanSpaceMiningFrigate
+    dependency highSecMiningFrigate::initializeGridServicesMiningFrigate::initializeExtensionModulesAndRigs::initializeHighPowerModule2 
+        to SystemUseCases::MineAsteroids::highSecMiningFrigate::activateMiningLaser;
+    dependency highSecMiningFrigate::initializeGridServicesMiningFrigate::initializeScanSpaceServices::scanGrid
         to SystemUseCases::MonitorAndDetectThreats::highSecMiningFrigate::scanSpace;
-    dependency highSecMiningFrigate::initializeGridServicesMiningFrigate::executeWarpDriveMiningFrigate
+    dependency highSecMiningFrigate::initializeGridServicesMiningFrigate::executeWarpDrive
         to SystemUseCases::WarpToCelestial::highSecMiningFrigate::executeWarpDrive;
-    dependency highSecMiningFrigate::initializeGridServicesMiningFrigate::approachSignatureMiningFrigate
+    dependency highSecMiningFrigate::initializeGridServicesMiningFrigate::initializeNavigationServices::approachSignatureAtRange
         to SystemUseCases::ApproachSignature::highSecMiningFrigate::approachSignature;
-    dependency highSecMiningFrigate::initializeGridServicesMiningFrigate::dockInStationMiningFrigate
+    dependency highSecMiningFrigate::initializeGridServicesMiningFrigate::dockInStation
         to SystemUseCases::DockToStation::highSecMiningFrigate::dockInStation;
-    dependency highSecMiningFrigate::initializeGridServicesMiningFrigate::deployDefenseDronesMiningFrigate
+    dependency highSecMiningFrigate::initializeGridServicesMiningFrigate::initializeDrones
         to SystemUseCases::DeployDefenseDrones;
-    dependency highSecMiningFrigate::transferOreMiningFrigate
+    dependency highSecMiningFrigate::transferOre
         to SystemUseCases::TransferOre;
-    dependency highSecMiningFrigate::undockFromStationMiningFrigate
+    dependency highSecMiningFrigate::undockFromStation
         to SystemUseCases::UndockFromStation;
 
     
@@ -464,5 +567,5 @@
     view 'Mining Frigate states' : 'Mining Frigate Behavior' {
         expose miningFrigateConfiguration::miningFrigateStates::*;
         //render TBD;
-    }   
- }
+    } 
+}

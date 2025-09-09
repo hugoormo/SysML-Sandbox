@@ -22,7 +22,7 @@ package ConOps {
 package MissionRequirements {
 	
 	private import CelestialsAndStructures::*;
-	private import StdPortsAndInterfaces::*;
+	private import StdPortsAndInterfaces::ImperialTechnology::*;
 	private import DomainPackage::*;
 	private import ScalarValues::*;
 	private import StakeholderConcerns::*;
@@ -95,6 +95,7 @@ package OperationalConcept {
 
 	private import DomainPackage::*;
 	private import ScalarValues::*;
+	private import StdPortsAndInterfaces::ImperialTechnology::*;
 
 	doc /*Overview: 
 		* The Mining Corporation's fleet of mining frigates operates in High-Security (High Sec), Low-Security (Low Sec), 
@@ -147,13 +148,13 @@ package OperationalConcept {
                 */
         }
 
-        message of StdPortsAndInterfaces::ShipComms from miningfleetCommander.targetAsteroidBeltSent to minerPilotPod.targetAsteroidBeltReceived; 
-        then message of StdPortsAndInterfaces::ShipComms from miningfleetCommander.targetAsteroidSent to minerPilotPod.targetAsteroidReceived;
-        message of StdPortsAndInterfaces::ShipComms from minerPilotPod.threatDetectedSent to miningfleetCommander.threatDetectedReceived;
-        message of StdPortsAndInterfaces::ShipComms from miningfleetCommander.threatNeutralizeSent to minerPilotPod.threatNeutralizeReceived;
-        message of StdPortsAndInterfaces::ShipComms from minerPilotPod.canOutSend to logisticsPilotPod.canOutReceived;
-		message of StdPortsAndInterfaces::ShipComms from logisticsPilotPod.transportHoldFullSent to miningfleetCommander.transportHoldFullReceived;
-		message of StdPortsAndInterfaces::ShipComms from miningfleetCommander.transportReturnSent to logisticsPilotPod.transportReturnReceived;
+        message of ShipComms from miningfleetCommander.targetAsteroidBeltSent to minerPilotPod.targetAsteroidBeltReceived; 
+        then message of ShipComms from miningfleetCommander.targetAsteroidSent to minerPilotPod.targetAsteroidReceived;
+        message of ShipComms from minerPilotPod.threatDetectedSent to miningfleetCommander.threatDetectedReceived;
+        message of ShipComms from miningfleetCommander.threatNeutralizeSent to minerPilotPod.threatNeutralizeReceived;
+        message of ShipComms from minerPilotPod.canOutSend to logisticsPilotPod.canOutReceived;
+		message of ShipComms from logisticsPilotPod.transportHoldFullSent to miningfleetCommander.transportHoldFullReceived;
+		message of ShipComms from miningfleetCommander.transportReturnSent to logisticsPilotPod.transportReturnReceived;
 	}
 	
 	//other use cases would be required for Low Sec, Null Sec and W-Space.

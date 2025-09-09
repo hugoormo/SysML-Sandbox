@@ -6,7 +6,7 @@ package CelestialsAndStructures {
     */
 
     private import ScalarValues::*;
-    private import StdPortsAndInterfaces::*;
+    private import StdPortsAndInterfaces::ImperialTechnology::*;
 
     item def Ore {
         attribute purity : Real;
@@ -29,7 +29,10 @@ package CelestialsAndStructures {
         attribute depletionRate : Real;             // Rate at which ore is extracted (m³/hour)
         port asteroidOrePort : AsteroidOrePort;
         timeslice oreYieldIncreases;
-    }
+    } 
+
+    item gravitationalWave;
+    item MagnetometricWave;
     
     //Celestial and Strucutres ports
     port def AsteroidOrePort {
