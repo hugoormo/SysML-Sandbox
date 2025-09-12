@@ -40,7 +40,7 @@ package StdPortsAndInterfaces {
 
         port def DirectionalPropulsion;
 
-        //Ship resiience interaction points
+        //Ship resilience interaction points
         port def ThreatPort {
             out item firePower : FirePower;
         }
@@ -53,16 +53,16 @@ package StdPortsAndInterfaces {
         //Standard ship modules extension points
         port def HighSlotPort {
             in power : PowerSupply;
-            in control : HighSlotCommand;
+            in control : ModuleCommand;
         }
 
         port def MediumSlotPort {
             in power : PowerSupply;
-            in control : MediumSlotCommand;
+            in control : ModuleCommand;
         }
 
         port def LowSlotPort {
-            in control : LowSlotCommand;
+            in control : ModuleCommand;
         }
 
         port def RigPort {
@@ -108,16 +108,8 @@ package StdPortsAndInterfaces {
             attribute energyTransfer : Real;
         }
 
-        item def HighSlotCommand {
-            attribute activation : Boolean;
-        }
-
-        item def MediumSlotCommand {
-            attribute activation : Boolean;
-        }
-
-        item def LowSlotCommand {
-            attribute activation : Boolean;
+        item def ModuleCommand {
+            attribute command : String;
         }
         
         item def ModuleReport {
@@ -222,7 +214,7 @@ package StdPortsAndInterfaces {
             end port modulePort : HighSlotPort;
 
             flow of PowerSupply from hullPort.power to modulePort.power;
-            flow of HighSlotCommand from hullPort.control to modulePort.control;
+            flow of ModuleCommand from hullPort.control to modulePort.control;
         }
 
         interface def MediumSlotInterface {
@@ -230,14 +222,14 @@ package StdPortsAndInterfaces {
             end port modulePort : MediumSlotPort;
 
             flow of PowerSupply from hullPort.power to modulePort.power;
-            flow of MediumSlotCommand from hullPort.control to modulePort.control;
+            flow of ModuleCommand from hullPort.control to modulePort.control;
         }
 
         interface def LowSlotInterface {
             end port hullPort : ~LowSlotPort;
             end port modulePort : LowSlotPort;
 
-            flow of LowSlotCommand from hullPort.control to modulePort.control;
+            flow of ModuleCommand from hullPort.control to modulePort.control;
         }
 
         //Aggression interfaces
@@ -278,23 +270,30 @@ package StdPortsAndInterfaces {
         
         private import ImperialTechnology;
         private import COTS::*;
+
+        //Ship items
+        item def ComputationServiceGallente;
+        item def DiagnosisGallente;
         
         //Ship components
-        part def GallenteStandardComponent :> ImperialStandardComponent {
+        part def GallenteStandardComponent :> ImperialStandardModule {
+            port commandControlGallente : CommandControlGallente;
             port computationNetworkPort : ComputationNetworkGallente;
             port powerGridPort : PowerGridGallente;
         }
         //Ship components ports
         port def ComputationNetworkGallente {
-            inout computationService : ComputationServiceGallente;
+            in computationRequest : ComputationNetworkGallente;
+            out computationResponse : ComputationServiceGallente;
         }
 
         port def CommandControlGallente {
             out shipCommand : ImperialTechnology::ShipCommand;
+            in shipDiagnosis : DiagnosisGallente;
         }
 
         port def PowerGridGallente {
-            inout powerGrid : Real;
+            out powerGrid : Real;
         }
 
         port def GravimetricAntenna;   //Gallente uses gravimetric sensor technology
@@ -302,11 +301,19 @@ package StdPortsAndInterfaces {
         //Ship interfaces
         interface def GallenteControlIF {
             end port supplierPort : CommandControlGallente;
-            end port consumerPort : CommandControlGallente;
+            end port consumerPort : ~CommandControlGallente;
         }
 
-        //Ship items
-        item def ComputationServiceGallente;
+        interface def GallenteComputationServicesIF {
+            end port supplierPort : ComputationNetworkGallente;
+            end port consumerPort : ~ComputationNetworkGallente;
+        }
+
+        interface def GallentePowerGridIF {
+            end port supplierPort : PowerGridGallente;
+            end port consumerPort : ~PowerGridGallente;
+        }
+
     }
 
 }

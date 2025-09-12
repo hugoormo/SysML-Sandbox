@@ -5,10 +5,12 @@
  	private import RollupAnalysis::*; 
 
     //COTS Imperial standrard ship components
-    abstract part def ImperialStandardComponent :> SimpleSpaceshipComponent;
+    abstract part def ImperialStandardModule :> SimpleSpaceshipComponent {
+        action imperialStandardModuleAction;
+    }
  
     //COTS Modules Definitions 
-    abstract part def MinerModule :> ImperialStandardComponent{
+    abstract part def MinerModule :> ImperialStandardModule{
         doc /* Standard mining laser used on mining frigates for ore extraction. */
         attribute miningYield : Real;
         attribute cycleTime : Real;
@@ -21,7 +23,7 @@
         port laserBeam;
         
         // **Action: Extract Ore
-        action extractOre { 
+        action extractOre :>> imperialStandardModuleAction { 
             in miningLaserPowerSupply = highSlot.power;
             in miningLaserTarget = highSlot.control;
             out miningLaserStatus = highSlot.control; 
@@ -61,7 +63,7 @@
     }
     part 'Mining Laser Particle Bore Compact' : 'Particle Bore Compact Mining Laser';
 
-    part def Afterburner :> ImperialStandardComponent {
+    part def Afterburner :> ImperialStandardModule {
         doc /* Improves sublight speed by increasing thrust. */
         attribute velocityBonus : Real = 112.5;
         attribute activationCost : Real = 20.0;
@@ -71,10 +73,10 @@
 
         port lowSlot : ~LowSlotPort;
 
-        action boostSpeed;
+        action boostSpeed :>> imperialStandardModuleAction;
     }
 
-    part def SmallShieldExtenderI :> ImperialStandardComponent {
+    part def SmallShieldExtenderI :> ImperialStandardModule {
         doc /* Increases shield capacity for additional survivability. */
         attribute shieldHPBonus : Real = 262.0;
         attribute signatureRadiusIncrease : Real = 12.0;
@@ -83,10 +85,10 @@
 
         port mediumSlot : ~MediumSlotPort;
 
-        action extendShield;
+        action extendShield :>> imperialStandardModuleAction;
     }
 
-    part def SmallCapBatteryI :> ImperialStandardComponent {
+    part def SmallCapBatteryI :> ImperialStandardModule {
         doc /* Improves capacitor recharge and overall energy stability. */
         attribute capacitorBonus : Real = 125.0;
         attribute rechargeMultiplier : Real = 1.2;
@@ -99,7 +101,7 @@
 
     }
 
-    part def SurveyScannerI :> ImperialStandardComponent {
+    part def SurveyScannerI :> ImperialStandardModule {
         doc /* Scans asteroids to determine ore content before mining. */
         attribute scanRange : Real = 15000.0;
         attribute cycleTime : Real = 5.0;
@@ -108,10 +110,10 @@
 
         port mediumSlot : ~MediumSlotPort;
 
-        action scanAsteroid {out surveyReport : ModuleReport;}
+        action scanAsteroid {out surveyReport : ModuleReport;} :>> imperialStandardModuleAction;
     }
 
-    part def WarpCoreStabilizerI :> ImperialStandardComponent {
+    part def WarpCoreStabilizerI :> ImperialStandardModule {
         doc /* Improves resistance against warp disruption (scramblers and disruptors). */
         attribute warpCoreStrengthBonus : Integer = 1;
         attribute targetingPenalty : Real = -40.0;
@@ -122,7 +124,7 @@
         port lowSlot : ~LowSlotPort;
     }
 
-    part def DroneLinkAugmentor :> ImperialStandardComponent {
+    part def DroneLinkAugmentor :> ImperialStandardModule {
         doc /* These modules extend your drone control range. Drone Link Augmentors 
         * can be useful for drone ships and ships with nothing else to fit in their spare highslots. */
 
@@ -136,6 +138,9 @@
         port droneControlPort: DroneControllerPort;
         port droneThreatPort : ThreatPort;
     }
+
+    //COTS Imperial standard rigs
+    part def ImperialStandardRig;
 
     
 }

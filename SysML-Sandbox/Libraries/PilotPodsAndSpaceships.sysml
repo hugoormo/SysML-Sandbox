@@ -3,7 +3,8 @@ package PilotPodsAndSpaceships {
     private import StdPortsAndInterfaces::ImperialTechnology::*;
     private import ScalarValues::*;
     private import COTS::*;
-    private import RollupAnalysis::*; 
+    private import RollupAnalysis::*;
+    private import SI::second; 
 
     part def PilotPod {
         attribute skillsSet : SkillsSetPilot;
@@ -20,8 +21,23 @@ package PilotPodsAndSpaceships {
 
     abstract part def Spaceship :> ImperialStandardShip; //Placeholder for any kind of spaceship not yet specified
 
+    //Imperial ship classification
+    enum def VesselType {
+        enum Frigate;
+        enum Corvette;
+        enum Destroyer;
+        enum Cruiser;
+        enum Battlecruiser;
+        enum Battleship;
+    }
+    
     //Imperial Standard Ship Blueprint
     abstract part def ImperialStandardShip :> CompositeSpaceshipComponent {
+
+        //Manufacturer and identification
+        attribute vesselType : VesselType;
+        attribute vesselClass : String;
+        attribute manufacturer : String;
 
         //these attributes redefine the attributs of the roll up calculation
         //the ship provides grid, capacitor and CPU hence usage is set to 0.
@@ -53,7 +69,7 @@ package PilotPodsAndSpaceships {
         attribute warpCoreStrength : Integer;
         attribute maxLockedTargets : Integer;
         attribute sensorStrength : Integer;
-
+        
         //Modules and rigs extension ports
         port highPowerSlot : HighSlotPort[1..8];
         port midPowerSlot : MediumSlotPort[1..5];
@@ -76,143 +92,229 @@ package PilotPodsAndSpaceships {
         port structureMitigationPort : ~ThreatPort;
         port warpShield : WarpDriveDisruptionShield;
 
-        state states {
-
-            entry action initial;
-            then state Parked {
-                doc /* The mining frigate is parked inside a station and can be boarded. */
-            } 	
-            state Boarded {
-                doc /* The mining frigate is boarded inside a station in the docking pad, available for 
-                    * refitting, resupply, or cargo transfer. */
-                exit action ::> undockFromStation;
-            }
-            state InGrid {
-                doc /* The mining frigate is in open space, near asteroids, stations, or other celestial objects. */
-            }
-            state OnWarp {
-                doc /* The mining frigate is in warp, traveling between locations. */
-                entry action ::> initializeGridServices.executeWarpDrive;
-            }        
-            
-            transition parked_to_boarded
-                first Parked
-                accept boardShip : StationCommand via podPort
-                then Boarded;
-            
-            transition boarded_to_parked
-                first Boarded
-                accept unboardShip : StationCommand via podPort
-                then Parked;
-            
-            transition boarded_to_inGrid
-                first Boarded
-                accept pilotPodUndockCommandSig : ShipCommand via podPort
-                do action ::> initializeGridServices
-                then InGrid;  		
-                
-            transition inGrid_to_docked
-                first InGrid
-                accept pilotPodDockCommandSig : ShipCommand via podPort
-                then Boarded;
-                
-            transition inGrid_to_onWarp
-                first InGrid
-                accept warpCommandSig : ShipCommand via podPort
-                then OnWarp;
-        
-            transition onWarp_to_inGrid
-                first OnWarp
-                accept when warpBubbleEnd
-                then InGrid;     	   
-        } 
-
-        //Declaration of the operational actions of a spaceship.
-        action initializeGridServices {
-            doc /*This action initializes the spaceship for the operational services in grid.
-                * The actions do not end of themselves but will be terminated by the transition on the state. 
-                    */
-            first start;
-            then fork;
-                then initializeScanSpaceServices;
-                then initializeNavigationServices;
-                then dockInStation;
-                then initializeExtensionModulesAndRigs;
-            
-            action initializeScanSpaceServices {
-                doc /* Scan the grid and range space for potential threats. */
-                first start;
-                then fork;
-                    then scanGrid;
-                    then directionalScan;
-                
-                action scanGrid {
-                    doc /*refreshes continuously the report of the signatures detected in grid*/
-                    loop {
-                        action cycleScanner {out scanReport : String;}
-                        then send ShipReport(cycleScanner.scanReport) via podPort; //grid scan report
-                    }
-                }
-                action directionalScan {
-                    out scanReport : String;
-                    accept ScanForThreatsCommand via podPort;
-                    //more actions will come here
-                    then send ShipReport(directionalScan.scanReport) via podPort; //directional scan report
-                }
-            }
-
-            action initializeNavigationServices {
-                doc /*Approach a signature using the navigation system.*/
-                first start;
-                then fork;
-                    then approachSignatureAtRange;
-                    then orbitSignatureAtRange;
-                    then keepAtRangeSignature;
-
-                action approachSignatureAtRange {
-                    accept ApproachSignatureAtRangeCommand via podPort;
-                    //more actions will come here
-                    then action reportStatusApproach {out shipReport : String;}
-                    then send ShipCommand(reportStatusApproach.shipReport) via podPort;//Approach in progress        
-                }
-                action orbitSignatureAtRange; //more actions will come here
-                action keepAtRangeSignature; //more actions will come here
-            }
-
-            action executeWarpDrive {
-                doc /* Engage the warp drive to travel to the destination. */
-                    accept ExecuteWarpDriveCommand via podPort;
-                    //more actions will come here
-                    then action reportStatusWarpDrive {out shipReport : String;}
-                    then send ShipCommand(reportStatusWarpDrive.shipReport) via podPort; //warpDrive engaged
-                    //more actions will come here
-                    then action reportStatusDestination {out shipReport : String;}
-                    then send ShipCommand(reportStatusDestination.shipReport) via podPort; //Destination reached
-            }
-            
-            action dockInStation {
-                doc /*Dock into a station to make repairs, resupply capacitor and support systems.*/
-                
-                action requestDockingClearance {out ShipReport : String;}
-                then send ShipCommand(requestDockingClearance.ShipReport) via podPort;
-                then accept DockingRequestAccepted;
-                //more actions will come here
-                then action reportRequestAccepted {out shipReport : String;}
-                then send ShipCommand(reportRequestAccepted.shipReport) via podPort; //Approach in progress
-            }
-            
-            action initializeExtensionModulesAndRigs {
-                doc /* 
-                    * Activates all service modules in a configured ship
-                    * Record all installed modules in the configuration of the system and enables them
-                    */
-            }   
+        //Exhibited or performed behavior of the spaceshihp
+        exhibit imperialStandardShipStates {
+            in shipCommandPort = podPort;
+            in shipWarpBubbleEnd = warpBubbleEnd;
         }
-        
-        action undockFromStation {
-            doc /*Undock from a station.*/
-    
-        }
-            
     }
+
+    //Imperial Standard Ship Behavior
+    state imperialStandardShipStates {
+        doc /* All imperial compliant spaceships share a basic behavior. 
+            */
+        in shipCommandPort : PodPort;
+        in shipWarpBubbleEnd : Boolean;
+
+        entry action initial;
+        then state Parked {
+            doc /* The spaceship is parked inside a station and can be boarded. 
+            */
+        } 	
+        state Boarded {
+            doc /* The spaceship is boarded inside a station in the docking pad, available for 
+                * refitting, resupply, or cargo transfer. 
+                */
+            exit action ::> undockFromStation;
+        }
+        state InGrid {
+            doc /* The spaceship is in open space, near asteroids, stations, or other celestial objects. 
+            */
+        }
+        state OnWarp {
+            doc /* The spaceship is in warp, traveling between locations. 
+            */
+        }        
+        
+        transition parked_to_boarded
+            first Parked
+            accept boardShip : StationCommand via shipCommandPort
+            then Boarded;
+        
+        transition boarded_to_parked
+            first Boarded
+            accept unboardShip : StationCommand via shipCommandPort
+            then Parked;
+        
+        transition boarded_to_inGrid
+            first Boarded
+            accept pilotPodUndockCommandSig : ShipCommand via shipCommandPort
+            do action ::> startUpSequence {in gridServicesCommandPort = shipCommandPort;}
+            then InGrid;  		
+            
+        transition inGrid_to_docked
+            first InGrid
+            accept pilotPodDockCommandSig : ShipCommand via shipCommandPort
+            do action ::> shutDownSequence
+            then Boarded;
+            
+        transition inGrid_to_onWarp
+            first InGrid
+            accept warpCommandSig : ShipCommand via shipCommandPort
+            do action executeWarpDrive {
+                in warpCommandPort : PodPort;
+                in warpBubbleEnd : CelestialSignature;
+                in atRange : Real;
+            }
+            then OnWarp;
+    
+        transition onWarp_to_inGrid
+            first OnWarp
+            accept when shipWarpBubbleEnd
+            then InGrid;     	   
+    } 
+    
+    //Declaration of the operational actions of a spaceship.
+    //Start-up sequence - Initialize generic spaceship
+    action startUpSequence {
+        doc /*This action initializes the spaceship for the operational services in grid.
+            * This action stays active until a state transition terminates it  
+            */
+        in shipServicesCommandPort : PodPort;
+
+        first start;
+        then initializePowerGrid;
+        then initializeGenerator;
+        then initializeScanSpaceServices {in scanSpaceServicesCommandPort = shipServicesCommandPort;}
+        then initializeNavigationServices {in navigationServicesCommandPort = shipServicesCommandPort;}     
+    }
+
+    action shutDownSequence { //technology dependent actions will be added by the developers here.
+        doc /*This action shuts-down the spaceship's services and systems.
+            */
+    }
+
+    action initializePowerGrid { //technology dependent actions will be added by the developers here.
+        doc /*This action starts the capacitor and the power grid network.
+            */
+    }
+
+    action initializeGenerator { //technology dependent actions will be added by the developers here.
+        doc /*This action starts the generator and the connexion to the capacitor.
+            */
+    }
+    
+    action initializeScanSpaceServices {
+        doc /* Scan the grid and range space for potential threats. 
+        */
+        in scanSpaceServicesCommandPort : PodPort;
+
+        first start;
+        then action powerUpSensorSystem; //technology dependent actions will be added by the developers here.
+        then fork;
+            then action scanGrid {
+                doc /*refreshes continuously the report of the signatures detected in grid
+                */
+                accept after 1[s];
+                then action cycleScanner {out scanReport : String;} //technology dependent actions will be added by the developers here.
+                then send cycleScanner.scanReport via scanSpaceServicesCommandPort; //grid scan report
+                then terminate this;
+            }
+
+            then action directionalScan {
+                doc /*provides directional scan services to the pilot on demand asynchronously.
+                */
+                accept ScanForThreatsCommand : ShipCommand via scanSpaceServicesCommandPort;
+                then action scanSpace {out scanReport : String;} //technology dependent actions will be added by the developers here.
+                then send scanSpace.scanReport via scanSpaceServicesCommandPort; //directional scan report
+                then terminate this;
+            }
+    }
+
+    action initializeNavigationServices {
+        doc /*Approach a signature using the navigation system.
+        */
+        in navigationServicesCommandPort : PodPort;
+
+        first start;
+        then action powerUpNavigationSystem; //technology dependent actions will be added by the developers here.
+        then fork;
+            then action approachSignatureAtRange {
+
+                accept ApproachSignatureAtRangeCommand : ShipCommand via navigationServicesCommandPort;
+                //technology dependent actions will be added by the developers here.
+                then action reportStatusApproach {out shipReport : String;}
+                then send reportStatusApproach.shipReport via navigationServicesCommandPort;//Approach in progress        
+            }
+            then action orbitSignatureAtRange; //technology dependent actions will be added by the developers here.
+            then action keepAtRangeSignature; //technology dependent actions will be added by the developers here.
+            then action dockInStation {
+                doc /*Dock into a station to make repairs, resupply capacitor and support systems.
+                */
+
+                accept DockToStation : ShipCommand via navigationServicesCommandPort;
+                then action requestDockingClearance {in station : CelestialSignature; out ShipReport : String;}
+                //technology dependent actions will be added by the developers here.
+                then send requestDockingClearance.ShipReport via navigationServicesCommandPort;
+                then accept DockingRequestAccepted : ShipCommand;
+                //technology dependent actions will be added by the developers here.
+                then action reportRequestAccepted {out shipReport : String;}
+                then send reportRequestAccepted.shipReport via navigationServicesCommandPort; //Approach in progress
+            }
+    }
+
+    //the next behavior need to be configured to each different type of vessel
+    abstract action initializeExtensionModule { //technology dependent actions will be added by the developers here.
+        doc /* 
+            * Activates all service modules in a configured ship
+            * Record all installed modules in the configuration of the system and enables them
+            */
+        in moduleServicesCommandPort : PodPort;
+        in module : ImperialStandardModule;
+
+        first start;
+            then action configureModule {
+                in module : ImperialStandardModule; 
+                out commandModule : ShipCommand;
+                out reportModule : ShipReport; 
+            } //technology dependent actions will be added by the developers here.
+            then action powerUpModule; //technology dependent actions will be added by the developers here.
+            then action diagnoseModule; //technology dependent actions will be added by the developers here.
+            then action enableModuleServices; //technology dependent actions will be added by the developers here.
+            then accept configureModule.commandModule;
+            then perform action moduleFunction ::> configureModule.module.imperialStandardModuleAction;
+            then accept configureModule.reportModule;
+            then action reportStatusModule {out shipReport : ShipReport;}
+            then send reportStatusModule.shipReport via moduleServicesCommandPort;
+    }
+
+    //the next behavior need to be configured to each different type of vessel
+    abstract action initializeExtensionRig { //technology dependent actions will be added by the developers here.
+        doc /* 
+            * Activates all rigs in a configured ship
+            * Record all installed rigs in the configuration of the system and enables them
+            */
+        in shipRig : ImperialStandardRig;
+
+        first start;
+            then action configureRig {
+                in shipRig : ImperialStandardRig; 
+            } //technology dependent actions will be added by the developers here.
+            then action powerUpRig; //technology dependent actions will be added by the developers here.
+            then action diagnoseRig; //technology dependent actions will be added by the developers here.
+            then action enableRig; //technology dependent actions will be added by the developers here.
+    }
+
+    action executeWarpDrive {
+                doc /* Engage the warp drive to travel to a celestial destination. 
+                */
+                in warpCommandPort : PodPort;
+                in warpBubbleEnd : CelestialSignature;
+                in atRange : Real;
+
+                accept ExecuteWarpDriveCommand : ShipCommand via warpCommandPort;
+                //technology dependent actions will be added by the developers here.
+                then action reportStatusWarpDrive {out shipReport : ShipReport;}
+                then send reportStatusWarpDrive.shipReport via warpCommandPort; //warpDrive engaged
+                //technology dependent actions will be added by the developers here.
+                then action reportStatusDestination {out shipReport : String;}
+                then send reportStatusDestination.shipReport via warpCommandPort; //Destination reached
+            }   
+    
+    action undockFromStation { //technology dependent actions will be added by the developers here.
+        doc /*Undock from a station.*/
+
+    }
+            
+    
 }
