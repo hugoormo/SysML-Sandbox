@@ -1,12 +1,13 @@
 package PilotPodsAndSpaceships {
 
+    private import NaturalEnvironment::*;
     private import StdPortsAndInterfaces::ImperialTechnology::*;
     private import ScalarValues::*;
     private import COTS::*;
     private import RollupAnalysis::*;
     private import SI::second; 
 
-    part def PilotPod {
+    part def PilotPod :> EmittingMassiveObject {
         attribute skillsSet : SkillsSetPilot;
         attribute controlEfficiency : Real default 0.6;         // Efficiency of command execution (%)
         attribute fleetSize: Integer;
@@ -32,7 +33,7 @@ package PilotPodsAndSpaceships {
     }
     
     //Imperial Standard Ship Blueprint
-    abstract part def ImperialStandardShip :> CompositeSpaceshipComponent {
+    abstract part def ImperialStandardShip :> CompositeSpaceshipComponent, EmittingMassiveObject {
 
         //Manufacturer and identification
         attribute vesselType : VesselType;
@@ -79,12 +80,12 @@ package PilotPodsAndSpaceships {
         port dockingPort : ~DockingPort[1];
 
         //Ship Interaction ports
-        port longRangeDirectionalSensorAntenna : LongRangeSensorDirectionalAntenna;
-        port gridSensorAntenna : GridSensorAntenna;
-        port shipComms : ShipCommsPort;
-        port zPropulsion : MainPropulsion[1..*];
-        port xPropulsion : DirectionalPropulsion[1..*];
-        port yPropulsion : DirectionalPropulsion[1..*];
+        port longRangeDirectionalSensorPort : LongRangeSensorDirectionalAntenna;
+        port gridSensorPort : GridSensorAntenna;
+        port shipCommsPort : ShipCommsPort;
+        port xPropulsion : MainPropulsion[1..*];
+        port yPropulsion : RotationPropulsion[1..*];
+        port zPropulsion : RotationPropulsion[1..*];
 
         //Ship resilience interactions
         port shieldMitigationPort : ~ThreatPort;

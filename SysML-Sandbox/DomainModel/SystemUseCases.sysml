@@ -1,7 +1,8 @@
 package SystemUseCases {
 
     // Import the Domain package for referencing actors
-    private import CelestialsAndStructures::*;
+    private import NaturalEnvironment::*;
+    private import Structures::*;
     private import DomainPackage::*;
     private import ScalarValues::*;
     private import StdPortsAndInterfaces::ImperialTechnology::*;
@@ -84,10 +85,10 @@ package SystemUseCases {
                   * 2. Detect threats beyond the grid range using the directional sensor array.
                   */
         }
-        message of GravitationalWave from hostilePilotPod.signatureEmissionSend to highSecMiningFrigate.scanSpace.scanGrid;
+        message of GravitationalField from hostilePilotPod.signatureEmissionSend to highSecMiningFrigate.scanSpace.scanGrid;
         message of ShipReport from highSecMiningFrigate.scanSpace.scanGrid to pilotPod.scanGridReportReceived;
         message of ShipReport from pilotPod.directionalScanSent to highSecMiningFrigate.scanSpace.directionalScan;
-        then message of GravitationalWave from hostilePilotPod.signatureEmissionSend to highSecMiningFrigate.scanSpace.directionalScan;
+        then message of GravitationalField from hostilePilotPod.signatureEmissionSend to highSecMiningFrigate.scanSpace.directionalScan;
         message of ShipReport from highSecMiningFrigate.scanSpace.directionalScan to pilotPod.directionalScanReceived;
     }
 

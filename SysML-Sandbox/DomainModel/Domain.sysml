@@ -5,7 +5,8 @@ package DomainPackage {
 	private import SI::*;
 	private import ParametersOfInterestMetadata::*;
     private import StdPortsAndInterfaces::ImperialTechnology::*;
-    private import CelestialsAndStructures::*;
+    private import NaturalEnvironment::*;
+    private import Structures::*;
     private import PilotPodsAndSpaceships::*;
 	private import MiningFrigatePackage::*;
 	private import CauseAndEffect::*;

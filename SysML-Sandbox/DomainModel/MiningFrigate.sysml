@@ -59,12 +59,12 @@
         //Other ports redefine the imperial ship definition or add to the specific ship
         port podPort :>> podPort;
         port dockingPort :>> dockingPort;
-        port droneControl : DroneControllerPort[2];
-        port longRangeDirectionalSensorAntenna :>> longRangeDirectionalSensorAntenna : LongRangeSensorDirectionalAntenna, GravimetricAntenna;
-        port gridSensorAntenna :>> gridSensorAntenna : GridSensorAntenna, GravimetricAntenna;
-        port shipComms :>> shipComms;
-        port zPropulsion :>> zPropulsion[4];
-        port xPropulsion :>> xPropulsion[2];
+        port droneControlPort : DroneControllerPort[2];
+        port longRangeDirectionalSensorPort :>> longRangeDirectionalSensorPort : LongRangeSensorDirectionalAntenna, GravimetricAntenna;
+        port gridSensorPort :>> gridSensorPort : GridSensorAntenna, GravimetricAntenna;
+        port shipCommsPort :>> shipCommsPort;
+        port xPropulsion :>> xPropulsion[4];
+        port zPropulsion :>> zPropulsion[2];
         port yPropulsion :>> yPropulsion[2];
         //Ship resilience ports
         port warpShield :>> warpShield {
@@ -175,7 +175,7 @@
         }
 
         interface DroneControllerPortIF : DroneControllerPort [2] connect
-            hullPort ::> highSecMiningFrigate.droneControl to
+            hullPort ::> highSecMiningFrigate.droneControlPort to
 	        modulePort ::> drone.droneControlPort;
         
         interface miningLaser1IF : HighSlotInterface connect
@@ -262,7 +262,7 @@
         }
 
         interface DroneControllerPortIF : DroneControllerPort [2] connect
-            hullPort ::> lowSecMiningFrigate.droneControl to
+            hullPort ::> lowSecMiningFrigate.droneControlPort to
 	        modulePort ::> drone.droneControlPort;
         
         interface miningLaser1IF : HighSlotInterface connect
@@ -367,7 +367,7 @@
         }
 
         interface DroneControllerPortIF : DroneControllerPort [2] connect
-            hullPort ::> nullSecMiningFrigate.droneControl to
+            hullPort ::> nullSecMiningFrigate.droneControlPort to
 	        modulePort ::> drone.droneControlPort;
         
         interface miningLaser1IF : HighSlotInterface connect

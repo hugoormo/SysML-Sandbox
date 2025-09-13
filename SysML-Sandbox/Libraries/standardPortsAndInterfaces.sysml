@@ -38,7 +38,7 @@ package StdPortsAndInterfaces {
             in item disruptionField : WebifierDisruptionField;
         }
 
-        port def DirectionalPropulsion;
+        port def RotationPropulsion;
 
         //Ship resilience interaction points
         port def ThreatPort {

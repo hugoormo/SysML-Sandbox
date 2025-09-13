@@ -21,7 +21,8 @@ package ConOps {
 }
 package MissionRequirements {
 	
-	private import CelestialsAndStructures::*;
+	private import NaturalEnvironment::*;
+	private import Structures::*;
 	private import StdPortsAndInterfaces::ImperialTechnology::*;
 	private import DomainPackage::*;
 	private import ScalarValues::*;
@@ -95,6 +96,8 @@ package OperationalConcept {
 
 	private import DomainPackage::*;
 	private import ScalarValues::*;
+	private import NaturalEnvironment::*;
+	private import Structures::*;
 	private import StdPortsAndInterfaces::ImperialTechnology::*;
 
 	doc /*Overview: 
@@ -133,9 +136,9 @@ package OperationalConcept {
 			event occurrence transportReturnReceived;
 			then perform action unloadAndReturnOperationalProcedure;
 		}
-        actor asteroidBelt : CelestialsAndStructures::AsteroidBelt; 
+        actor asteroidBelt : AsteroidBelt; 
 		//the asteroid is part of the asteroid belt but in the context of the use case they are not "acting" in the same timeslice.
-        actor asteroid : CelestialsAndStructures::Asteroid [1..*] {
+        actor asteroid : Asteroid [1..*] {
             event occurrence asteroidDeintegrationSend;
             then event occurrence asteroidDepletionSend;
         }       
