@@ -107,7 +107,6 @@
 
             }
             action :>> initializeNavigationServices {
-                in scanSpaceServicesCommandPort : PodPort;
 
                 action :>> powerUpNavigationSystem;
                 action :>> approachSignatureAtRange;

@@ -76,49 +76,99 @@ package LogicalMiningFrigate {
             //Logical interfacing parts. 
             //For each port we will have a part that handle it. 
             part highPowerSlotManager1 : LogicalPart {
-                port highPowerSlotManagerPort :> highPowerSlot1Port;
-                port controlNetworkCommandPort :>> commandControlGallente;
+                port highPowerSlotManagerPort : PodPort :> highPowerSlot1Port;
+                port controlNetworkCommandPort : ~LogicalShipControlPort :>> commandControlGallente;
 
                 perform logicalMiningFrigateStates.logicalInitializeExtensionModule {
-                    in moduleServicesCommandPort = controlNetworkCommandPort;
+                    in moduleServicesCommandPort = highPowerSlotManagerPort;
+                    in module; //pending to define the module from the ship configurarion 
                 }
             }
             part highPowerSlotManager2 : LogicalPart {
-                port highPowerSlotManagerPort : highPowerSlot2Port;
-                port controlNetworkCommandPort :>> commandControlGallente;
+                port highPowerSlotManagerPort : PodPort :> highPowerSlot2Port;
+                port controlNetworkCommandPort : ~LogicalShipControlPort :>> commandControlGallente;
+
+                perform logicalMiningFrigateStates.logicalInitializeExtensionModule {
+                    in moduleServicesCommandPort = highPowerSlotManagerPort;
+                    in module; //pending to define the module from the ship configurarion 
+                }
             }
             part highPowerSlotManager3 : LogicalPart {
-                port highPowerSlotManagerPort : highPowerSlot3Port;
-                port controlNetworkCommandPort :>> commandControlGallente;
+                port highPowerSlotManagerPort : PodPort :> highPowerSlot3Port;
+                port controlNetworkCommandPort : ~LogicalShipControlPort :>> commandControlGallente;
+
+                perform logicalMiningFrigateStates.logicalInitializeExtensionModule {
+                    in moduleServicesCommandPort = highPowerSlotManagerPort;
+                    in module; //pending to define the module from the ship configurarion 
+                }
             }
             part midPowerSlotManager1 : LogicalPart {
-                port midPowerSlotManagerPort : midPowerSlotManager1;
+                port midPowerSlotManagerPort : PodPort :> midPowerSlotManager1;
+                port controlNetworkCommandPort : ~LogicalShipControlPort :>> commandControlGallente;
+
+                perform logicalMiningFrigateStates.logicalInitializeExtensionModule {
+                    in moduleServicesCommandPort = midPowerSlotManagerPort;
+                    in module; //pending to define the module from the ship configurarion 
+                }
             }
             part midPowerSlotManager2 : LogicalPart {
-                port midPowerSlotManagerPort : midPowerSlotManager2;
+                port midPowerSlotManagerPort : PodPort :> midPowerSlotManager2;
+                port controlNetworkCommandPort : ~LogicalShipControlPort :>> commandControlGallente;
+
+                perform logicalMiningFrigateStates.logicalInitializeExtensionModule {
+                    in moduleServicesCommandPort = midPowerSlotManagerPort;
+                    in module; //pending to define the module from the ship configurarion 
+                }
             }
             part midPowerSlotManager3 : LogicalPart {
-                port midPowerSlotManagerPort : midPowerSlotManager3;
+                port midPowerSlotManagerPort : PodPort :> midPowerSlotManager3;
+                port controlNetworkCommandPort : ~LogicalShipControlPort :>> commandControlGallente;
+
+                perform logicalMiningFrigateStates.logicalInitializeExtensionModule {
+                    in moduleServicesCommandPort = midPowerSlotManagerPort;
+                    in module; //pending to define the module from the ship configurarion 
+                }
             }
             part lowPowerSlotManager1 : LogicalPart {
-                port lowPowerSlotManagerPort : lowPowerSlot1Port;
+                port lowPowerSlotManagerPort : PodPort :> lowPowerSlot1Port;
+                port controlNetworkCommandPort : ~LogicalShipControlPort :>> commandControlGallente;
+
+                perform logicalMiningFrigateStates.logicalInitializeExtensionModule {
+                    in moduleServicesCommandPort = lowPowerSlotManagerPort;
+                    in module; //pending to define the module from the ship configurarion 
+                }
             }
 
             part rigCoupler1 : LogicalPart {
                 port rigCouplingPort :> rigPort1Port;
+                port controlNetworkCommandPort : ~LogicalShipControlPort :>> commandControlGallente;
+
+                perform logicalMiningFrigateStates.logicalInitializeExtensionModule {
+                    in shipRig; //pending to define the rig from the ship configurarion
+                }
             }
             part rigCoupler2 : LogicalPart {
                 port rigCouplingPort :> rigPort2Port;
+                port controlNetworkCommandPort : ~LogicalShipControlPort :>> commandControlGallente;
+
+                perform logicalMiningFrigateStates.logicalInitializeExtensionModule {
+                    in shipRig; //pending to define the rig from the ship configurarion
+                }
             }
             part rigCoupler3 : LogicalPart {
                 port rigCouplingPort :> rigPort3Port;
+                port controlNetworkCommandPort : ~LogicalShipControlPort :>> commandControlGallente;
+
+                perform logicalMiningFrigateStates.logicalInitializeExtensionModule {
+                    in shipRig; //pending to define the rig from the ship configurarion
+                }
             }
 
             part podManager : LogicalPart {
                 doc /*
                     * Receive podCommand items and send shipControl items
                     * Set between the podPort and the ShipController.
-                */
+                    */
                 port podManagerPort :> podPort;
                 port shipControllerCommandPort :>> commandControlGallente : LogicalShipControlPort;
 
@@ -132,14 +182,14 @@ package LogicalMiningFrigate {
             }
             part longRangeDirectionalSensor : LogicalPart {
                 port longRangeDirectionalSensorPort :> longRangeDirectionalSensorPort;
-                port controlNetworkCommandPort :>> commandControlGallente;
+                port controlNetworkCommandPort : ~LogicalShipControlPort :>> commandControlGallente;
 
                 perform logicalMiningFrigateStates.logicalInitializeScanSpaceServices.logicalPowerUpDirectionalSensorSystem;
                 perform logicalMiningFrigateStates.logicalInitializeScanSpaceServices.logicalDirectionalScan;
             }
             part gridSensor : LogicalPart {
                 port gridSensorAntenna :> gridSensorPort;
-                port controlNetworkCommandPort :>> commandControlGallente;
+                port controlNetworkCommandPort : ~LogicalShipControlPort :>> commandControlGallente;
 
                 perform logicalMiningFrigateStates.logicalInitializeScanSpaceServices.logicalPowerUpGridSensorSystem;
                 perform logicalMiningFrigateStates.logicalInitializeScanSpaceServices.logicalScanGrid;
@@ -199,12 +249,12 @@ package LogicalMiningFrigate {
             //Logical application parts
             part shipController : LogicalPart {
                 doc /*
-                * Central controller of the ship that executes the state machine and
-                * controlls the parts of the ship.
-                * Directly connected to the podManager.
-                */
+                    * Central controller of the ship that executes the state machine and
+                    * controlls the parts of the ship.
+                    * Directly connected to the podManager.
+                    */
                 port controlNetworkCommandPort :>> commandControlGallente;
-                port podManagerCommandPort :>> commandControlGallente;
+                port podManagerCommandPort : ~LogicalShipControlPort :>> commandControlGallente;
 
                 exhibit logicalMiningFrigateStates {
                     in commandControlGallente = commandControlGallente;
@@ -212,14 +262,14 @@ package LogicalMiningFrigate {
                 }
             }
             part powerGridManager : LogicalPart {
-                port controlNetworkCommandPort :>> commandControlGallente;
+                port controlNetworkCommandPort : ~LogicalShipControlPort :>> commandControlGallente;
 
                 perform logicalMiningFrigateStates.logicalInitializePowerGrid;
             }
             part miningYieldEnhancer : LogicalPart;
 
             part powerGenerator : LogicalPart {
-                port controlNetworkCommandPort :>> commandControlGallente;
+                port controlNetworkCommandPort : ~LogicalShipControlPort :>> commandControlGallente;
 
                 perform logicalMiningFrigateStates.logicalInitializeGenerator;
             }
@@ -232,8 +282,8 @@ package LogicalMiningFrigate {
             part navigationManager : LogicalPart {
                 doc /*
                     * Executes navigation commands received from the controller
-                */
-                port controlNetworkCommandPort :>> commandControlGallente;
+                    */
+                port controlNetworkCommandPort : ~LogicalShipControlPort :>> commandControlGallente;
 
                 perform logicalMiningFrigateStates.logicalInitializeNavigationServices.logicalPowerUpNavigationSystem;
                 perform logicalMiningFrigateStates.logicalInitializeNavigationServices.logicalApproachSignatureAtRange;
@@ -258,11 +308,18 @@ package LogicalMiningFrigate {
             //The internal resources are derived from the design and are not necessarily derivable 
             //from the external environment.
             //(S. Friedenthal et al.)
-            part powerGrid : LogicalPart;
+            part powerGrid : LogicalPart {
+                doc /*
+                    * Routes power to the expansion modules.
+                    */
+                
+                action monitorPowerInGrid; 
+            }
             part controlNetwork : LogicalPart {
                 doc /*
-                    * Routes all shipCommand items betweent he ship parts.  
-                */
+                    * Routes all shipCommand items between the ship parts.  
+                    */
+                port shipControllerCommandPort : ~LogicalShipControlPort :>> commandControlGallente;
                 port powerGridManagerCommandPort :>> commandControlGallente;
                 port powerGeneratorCommandPort :>> commandControlGallente;
                 port gridSensorCommandPort :>> commandControlGallente;
@@ -271,9 +328,23 @@ package LogicalMiningFrigate {
                 port highPowerSlotManager1CommandPort :>> commandControlGallente;
                 port highPowerSlotManager2CommandPort :>> commandControlGallente;
                 port highPowerSlotManager3CommandPort :>> commandControlGallente;
+                port midPowerSlotManager1CommandPort :>> commandControlGallente;
+                port midPowerSlotManager2CommandPort :>> commandControlGallente;
+                port midPowerSlotManager3CommandPort :>> commandControlGallente;
+                port lowPowerSlotManager1CommandPort :>> commandControlGallente;
+                port rigCoupler1CommandPort :>> commandControlGallente;
+                port rigCoupler2CommandPort :>> commandControlGallente;
+                port rigCoupler3CommandPort :>> commandControlGallente;
 
+                action routeCommandTraffic; 
             }
-            part computationNetwork : LogicalPart;
+            part computationNetwork : LogicalPart {
+                doc /*
+                    * Provides ship central CPU computation resources to modules.  
+                    */
+
+                action monitorUsageCPU;
+            }
 
             //connectivity of logical infrastructure parts with logical interfacing parts
 
@@ -308,6 +379,34 @@ package LogicalMiningFrigate {
             interface : LogicalControlIF connect
                 supplierPort ::> controlNetwork.highPowerSlotManager3CommandPort to
                 consumerPort ::> highPowerSlotManager3.controlNetworkCommandPort;
+
+            interface : LogicalControlIF connect
+                supplierPort ::> controlNetwork.midPowerSlotManager1CommandPort to
+                consumerPort ::> midPowerSlotManager1.controlNetworkCommandPort;
+
+            interface : LogicalControlIF connect
+                supplierPort ::> controlNetwork.midPowerSlotManager2CommandPort to
+                consumerPort ::> midPowerSlotManager2.controlNetworkCommandPort;
+
+            interface : LogicalControlIF connect
+                supplierPort ::> controlNetwork.midPowerSlotManager3CommandPort to
+                consumerPort ::> midPowerSlotManager3.controlNetworkCommandPort;
+
+            interface : LogicalControlIF connect
+                supplierPort ::> controlNetwork.lowPowerSlotManager1CommandPort to
+                consumerPort ::> lowPowerSlotManager1.controlNetworkCommandPort;
+
+            interface : LogicalControlIF connect
+                supplierPort ::> controlNetwork.rigCoupler1CommandPort to
+                consumerPort ::> rigCoupler1.controlNetworkCommandPort;
+
+            interface : LogicalControlIF connect
+                supplierPort ::> controlNetwork.rigCoupler2CommandPort to
+                consumerPort ::> rigCoupler2.controlNetworkCommandPort;
+
+            interface : LogicalControlIF connect
+                supplierPort ::> controlNetwork.rigCoupler3CommandPort to
+                consumerPort ::> rigCoupler3.controlNetworkCommandPort;
         }
     }
 
@@ -315,6 +414,9 @@ package LogicalMiningFrigate {
         //Logical behavior inherited from the mining frigate definition
         
         state logicalMiningFrigateStates :> miningFrigateStates {
+            doc /*
+                * 
+                */
             in shipControllerCommandPort : ~LogicalShipControlPort :>> shipCommandPort;
             in :>> shipWarpBubbleEnd;
             
@@ -364,8 +466,12 @@ package LogicalMiningFrigate {
                 accept when shipWarpBubbleEnd
                 then LogicalInGrid;  
 
-        //Venture class Behavior redefines imperial spaceship behavior with manufacturer's technology 
+        //Venture class Behavior redefines imperial spaceship behavior 
+        //(being a contraint for any spaceship) with manufacturer's technology 
             action logicalStartUpSequence :>> startUpSequence {
+                doc /*
+                    * 
+                    */
                 in logicalGridServicesCommandPort :>> shipServicesCommandPort;
                 
                 first start;
@@ -378,6 +484,9 @@ package LogicalMiningFrigate {
             action logicalInitializePowerGrid :>> initializePowerGrid;
             action logicalInitializeGenerator :>> initializeGenerator; 
             action logicalInitializeScanSpaceServices :>> initializeScanSpaceServices {
+                doc /*
+                    * 
+                    */
                 in scanSpaceServicesCommandPort :>> scanSpaceServicesCommandPort;
 
                 first start;
@@ -401,7 +510,10 @@ package LogicalMiningFrigate {
                 }
             }
             action logicalInitializeNavigationServices :>> initializeNavigationServices {
-                in scanSpaceServicesCommandPort :>> scanSpaceServicesCommandPort;
+                doc /*
+                    * 
+                    */
+                in navigationServicesCommandPort :>> navigationServicesCommandPort;
 
                 first start; 
                 then action logicalPowerUpNavigationSystem :>> powerUpNavigationSystem;
@@ -420,6 +532,9 @@ package LogicalMiningFrigate {
                 action logicalOrbitSignatureAtRange :>> orbitSignatureAtRange;
                 action logicalKeepAtRangeSignature :>> keepAtRangeSignature;
                 action logicalDockInStation :>> dockInStation {
+                    doc /*
+                        * 
+                        */
                     accept DockToStation : ShipCommand via navigationServicesCommandPort;
                     then action logicalrequestDockingClearance :>> requestDockingClearance {
                         in station : CelestialSignature; 
@@ -434,7 +549,10 @@ package LogicalMiningFrigate {
                 }
             }
             action logicalInitializeExtensionModule :>> initializeExtensionModule {
-                in moduleServicesCommandPort : LogicalShipControlPort :>> moduleServicesCommandPort;
+                doc /*
+                    * 
+                    */
+                in moduleServicesCommandPort :>> moduleServicesCommandPort;
                 in module :>> module;
 
                 first start; 
@@ -453,6 +571,9 @@ package LogicalMiningFrigate {
                 then send logicalReportStatusModule.shipReport via moduleServicesCommandPort;
             }
             action logicalInitializeExtensionRig :>> initializeExtensionRig {
+                doc /*
+                    * 
+                    */
                 in :>> shipRig;
 
                 first start;
@@ -468,6 +589,9 @@ package LogicalMiningFrigate {
             action logicalInitializeDroneServices :>> initializeDroneServices;
             action logicalTransferOre :>> transferOre;
             action logicalexecuteWarpDrive :>> executeWarpDrive {
+                doc /*
+                    * 
+                    */
                 in logicalWarpCommandPort :>> warpCommandPort;
                 in warpBubbleEnd : CelestialSignature;
                 in atRange : Real;
