@@ -1,7 +1,8 @@
 package StdPortsAndInterfaces {
 	
 	private import ScalarValues::*;
-    private import RollupAnalysis::*; 
+    private import RollupAnalysis::*;
+    private import NaturalEnvironment::*; 
     
     package ImperialTechnology {
     
@@ -22,30 +23,26 @@ package StdPortsAndInterfaces {
             in item droneCommand : DroneCommand;
             out item droneReport : DroneReport;
         }
-        port def LongRangeSensorDirectionalAntenna {
-            in item longRangeSignature : CelestialSignature [1..*];
-        }
+        port def LongRangeSensorDirectionalPort :> EmissionPort;
 
-        port def GridSensorAntenna {
-            in item gridSignature : GridSignature [1..*];
-        }
+        port def GridSensorPort :> EmissionPort;
 
         port def ShipCommsPort {
             inout item shipComm : ShipComms;
         }
 
-        port def MainPropulsion {
+        port def MainPropulsionPort {
             in item disruptionField : WebifierDisruptionField;
         }
 
-        port def RotationPropulsion;
+        port def RotationPropulsionPort;
 
         //Ship resilience interaction points
         port def ThreatPort {
             out item firePower : FirePower;
         }
 
-        port def WarpDriveDisruptionShield {
+        port def WarpDriveDisruptionShieldPort {
             attribute warpShielding : Integer;
             in item warpField : WarpField;
         }
@@ -191,19 +188,27 @@ package StdPortsAndInterfaces {
             attribute webifierStrength : Real;
         }
 
-        //Sensor items
-        item def CelestialSignature {
-            doc /*Large Signatures that are available within the system range*/
+        //Sensor data processing items
+        item def Signature {
+            doc /*Signatures are received emissiond from emitting massive object*/
             attribute type: String;
-            attribute CelestialSignatureID: String;
+            attribute signatureID: String;
+            attribute distance : Real;
+        }
+        item def CelestialSignature :> Signature {
+            doc /*Large Signatures that are available within the system range*/
+            attribute celestialType :>> type;
+            attribute celestialSignatureID :>> signatureID;
+            attribute celestialDistance :>> distance; //in parsecs
         }
 
-        item def GridSignature {
+        item def GridSignature :> Signature {
             doc /*Small Signatures that are continously refreshed at grid range or 
             *up to a few parsecs using the directional scanner
             */
-            attribute type: String;
-            attribute GridSignatureID: String;
+            attribute gridType :>> type;
+            attribute gridSignatureID :>> signatureID;
+            attribute gridDistance :>> distance; //in Km
         }
 
 
@@ -296,7 +301,14 @@ package StdPortsAndInterfaces {
             out powerGrid : Real;
         }
 
-        port def GravimetricAntenna;   //Gallente uses gravimetric sensor technology
+        //Gallente uses gravimetric sensor technology
+        port def LongRangeGravimetricSensorDirectionalPort :> EmissionPort {
+            out :>> magneticField[0]; 
+        }
+        //Gallente uses gravimetric sensor technology
+        port def GridGravimetricSensorPort :> EmissionPort {
+            out :>> magneticField[0]; 
+        }   
 
         //Ship interfaces
         interface def GallenteControlIF {

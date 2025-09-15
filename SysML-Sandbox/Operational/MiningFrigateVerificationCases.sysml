@@ -1,12 +1,12 @@
 package MiningFrigateVerification {
 
     private import MiningFrigateRequirements::*;
-    private import DomainPackage::*;
+    private import OperationalDomain::*;
     private import ScalarValues::*;
     private import ISQ::*;
 	private import SI::*;
 	private import VerificationCases::*;
-	private import MiningFrigatePackage::*;
+	private import MiningFrigateBlackBoxSpecification::*;
 
 	//Verifications at the system level
 	
@@ -64,12 +64,12 @@ package MiningFrigateVerification {
 package MiningFrigateValidation {
 
     private import MissionRequirements::*;
-    private import DomainPackage::*;
+    private import OperationalDomain::*;
     private import ScalarValues::*;
     private import ISQ::*;
 	private import SI::*;
 	private import VerificationCases::*;
-	private import MiningFrigatePackage::*;
+	private import MiningFrigateBlackBoxSpecification::**;
 
 	//These are the validation actions for the system/soution level
     //In fact they are Verifications at the problem/operational level

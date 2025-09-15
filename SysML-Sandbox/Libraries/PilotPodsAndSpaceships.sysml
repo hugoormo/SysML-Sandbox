@@ -80,18 +80,18 @@ package PilotPodsAndSpaceships {
         port dockingPort : ~DockingPort[1];
 
         //Ship Interaction ports
-        port longRangeDirectionalSensorPort : LongRangeSensorDirectionalAntenna;
-        port gridSensorPort : GridSensorAntenna;
+        port longRangeDirectionalSensorPort : LongRangeSensorDirectionalPort;
+        port gridSensorPort : GridSensorPort;
         port shipCommsPort : ShipCommsPort;
-        port xPropulsion : MainPropulsion[1..*];
-        port yPropulsion : RotationPropulsion[1..*];
-        port zPropulsion : RotationPropulsion[1..*];
+        port xPropulsionPort : MainPropulsionPort[1..*];
+        port yPropulsionPort : RotationPropulsionPort[1..*];
+        port zPropulsionPort : RotationPropulsionPort[1..*];
 
         //Ship resilience interactions
         port shieldMitigationPort : ~ThreatPort;
         port armourMitigationPort : ~ThreatPort;
         port structureMitigationPort : ~ThreatPort;
-        port warpShield : WarpDriveDisruptionShield;
+        port warpShieldPort : WarpDriveDisruptionShieldPort;
 
         //Exhibited or performed behavior of the spaceshihp
         exhibit imperialStandardShipStates {
@@ -140,7 +140,7 @@ package PilotPodsAndSpaceships {
         transition boarded_to_inGrid
             first Boarded
             accept pilotPodUndockCommandSig : ShipCommand via shipCommandPort
-            do action ::> startUpSequence {in gridServicesCommandPort = shipCommandPort;}
+            do action ::> startUpSequence {in shipServicesCommandPort = shipCommandPort;}
             then InGrid;  		
             
         transition inGrid_to_docked
@@ -264,19 +264,19 @@ package PilotPodsAndSpaceships {
         in module : ImperialStandardModule;
 
         first start;
-            then action configureModule {
-                in module : ImperialStandardModule; 
-                out commandModule : ShipCommand;
-                out reportModule : ShipReport; 
-            } //technology dependent actions will be added by the developers here.
-            then action powerUpModule; //technology dependent actions will be added by the developers here.
-            then action diagnoseModule; //technology dependent actions will be added by the developers here.
-            then action enableModuleServices; //technology dependent actions will be added by the developers here.
-            then accept configureModule.commandModule;
-            then perform action moduleFunction ::> configureModule.module.imperialStandardModuleAction;
-            then accept configureModule.reportModule;
-            then action reportStatusModule {out shipReport : ShipReport;}
-            then send reportStatusModule.shipReport via moduleServicesCommandPort;
+        then action configureModule {
+            in module : ImperialStandardModule; 
+            out commandModule : ShipCommand;
+            out reportModule : ShipReport; 
+        } //technology dependent actions will be added by the developers here.
+        then action powerUpModule; //technology dependent actions will be added by the developers here.
+        then action diagnoseModule; //technology dependent actions will be added by the developers here.
+        then action enableModuleServices; //technology dependent actions will be added by the developers here.
+        then accept configureModule.commandModule;
+        then perform action moduleFunction ::> configureModule.module.imperialStandardModuleAction;
+        then accept configureModule.reportModule;
+        then action reportStatusModule {out shipReport : ShipReport;}
+        then send reportStatusModule.shipReport via moduleServicesCommandPort;
     }
 
     //the next behavior need to be configured to each different type of vessel

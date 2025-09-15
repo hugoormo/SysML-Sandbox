@@ -4,8 +4,8 @@ package analysisProblemSpace {
 	private import ScalarValues::*;
 	private import ISQ::*;
 	private import SI::*;
-	private import DomainPackage::*;
-	private import MiningFrigatePackage::*;
+	private import OperationalDomain::*;
+	private import MiningFrigateBlackBoxSpecification::*;
 	private import MiningFrigateRequirements::*;
 
     // **General Analysis Definition: Risk-Adjusted Profitability Calculation**

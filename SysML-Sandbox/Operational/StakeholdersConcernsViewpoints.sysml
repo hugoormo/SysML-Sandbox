@@ -30,9 +30,9 @@ package StakeholderConcerns {
 
     private import ScalarValues::*;
     private import ISQ::*;
-    private import DomainPackage::MiningCorporation;
+    private import OperationalDomain::MiningCorporation;
     private import StakeholdersDef::*;
-    private import MiningFrigatePackage::*;
+    private import MiningFrigateBlackBoxSpecification::**;
 
     // The concerns are directly declared without definition, beacuse they aren't going to be reused in the scope of this model.
     // Concerns Derived from the Business Case

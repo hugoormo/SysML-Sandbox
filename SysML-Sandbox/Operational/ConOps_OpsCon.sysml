@@ -24,7 +24,7 @@ package MissionRequirements {
 	private import NaturalEnvironment::*;
 	private import Structures::*;
 	private import StdPortsAndInterfaces::ImperialTechnology::*;
-	private import DomainPackage::*;
+	private import OperationalDomain::*;
 	private import ScalarValues::*;
 	private import StakeholderConcerns::*;
 	    
@@ -94,7 +94,7 @@ package MissionRequirements {
 }
 package OperationalConcept {
 
-	private import DomainPackage::*;
+	private import OperationalDomain::*;
 	private import ScalarValues::*;
 	private import NaturalEnvironment::*;
 	private import Structures::*;

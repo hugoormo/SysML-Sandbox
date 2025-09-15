@@ -4,10 +4,7 @@ package NaturalEnvironment {
 
     item def EmittingMassiveObject {
         attribute mass : Real;
-        port emissionPort {
-            out gravitationalEmission : GravitationalField;
-            out magneticEmission : MagneticField;
-        }
+        port emissionPort : EmissionPort;
     }
     part def SolarSystem {
         part sun[1] : Sun;
@@ -42,6 +39,11 @@ package NaturalEnvironment {
     item magneticWave : MagneticField;
     
     //Celestial and Strucutres ports
+    port def EmissionPort {
+            out gravitationalField : GravitationalField;
+            out magneticField : MagneticField;
+        }
+    
     port def AsteroidOrePort {
 		out item ore : Ore;
 	}

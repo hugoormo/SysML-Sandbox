@@ -1,6 +1,6 @@
 package causeEffect {
 	
-	private import DomainPackage::domain;
+	private import OperationalDomain::domain;
 	private import CauseAndEffect::*;
 
 	//The cause-effect relationships

@@ -1,4 +1,4 @@
-package DomainPackage {
+package OperationalDomain {
 	
 	private import ScalarValues::*;
 	private import ISQ::*;
@@ -8,7 +8,7 @@ package DomainPackage {
     private import NaturalEnvironment::*;
     private import Structures::*;
     private import PilotPodsAndSpaceships::*;
-	private import MiningFrigatePackage::*;
+	private import MiningFrigateBlackBoxSpecification::**;
 	private import CauseAndEffect::*;
     private import CausationConnections::*;
     private import MissionRequirements::*;
@@ -61,7 +61,7 @@ package DomainPackage {
                     * Optimization: improve skill set of pilot
                     */
                 }
-            ref part highSecCorpMiningFrigate : MiningFrigatePackage::highSecMiningFrigate :>> spaceship [1];
+            ref part highSecCorpMiningFrigate : highSecMiningFrigate :>> spaceship [1];
         }
 
         part corpFleet : Fleet [1..*]{
@@ -89,7 +89,7 @@ package DomainPackage {
                     * Optimization: improve skill set of pilot
                     */
                 }
-            ref part lowSecCorpMiningFrigate : MiningFrigatePackage::lowSecMiningFrigate :>> spaceship [1];
+            ref part lowSecCorpMiningFrigate : lowSecMiningFrigate :>> spaceship [1];
         }
         part nullSecMiningPilotPod :> miningPilotPod [1..*] ordered {
             #moe attribute operationalMiningProfitability :>> operationalProfitability;
@@ -101,7 +101,7 @@ package DomainPackage {
                     * Optimization: improve skill set of pilot
                     */
                 }
-            ref part nullSecCorpMiningFrigate : MiningFrigatePackage::nullSecMiningFrigate :>> spaceship [1];
+            ref part nullSecCorpMiningFrigate : nullSecMiningFrigate :>> spaceship [1];
         }
 
     }

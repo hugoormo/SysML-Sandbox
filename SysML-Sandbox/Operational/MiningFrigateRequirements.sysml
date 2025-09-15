@@ -1,9 +1,9 @@
 package MiningFrigateRequirementsDef {
 
-    private import DomainPackage::*;
+    private import OperationalDomain::*;
     private import ScalarValues::*;
     private import StakeholderConcerns::*;
-    private import MiningFrigatePackage::*;
+    private import MiningFrigateBlackBoxSpecification::**;
     
     // System Requirements Definition. These are a managed as a Configuration item.
     requirement def <MFRQ01> OreExtractionEfficiencyRequirement { 
@@ -65,10 +65,10 @@ package MiningFrigateRequirementsDef {
 
 package MiningFrigateRequirements {
 
-    private import DomainPackage::*;
+    private import OperationalDomain::*;
     private import ScalarValues::*;
     private import MiningFrigateRequirementsDef::*;
-    private import MiningFrigatePackage::*;
+    private import MiningFrigateBlackBoxSpecification::**;
 
     //Mining Frigate Requirement assertions for the Mining Frigates
     // from the calculation in the Analysis.

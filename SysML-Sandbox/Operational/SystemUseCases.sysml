@@ -3,11 +3,12 @@ package SystemUseCases {
     // Import the Domain package for referencing actors
     private import NaturalEnvironment::*;
     private import Structures::*;
-    private import DomainPackage::*;
+    private import OperationalDomain::*;
     private import ScalarValues::*;
     private import StdPortsAndInterfaces::ImperialTechnology::*;
     private import COTS::*;
     private import PilotPodsAndSpaceships::*;
+    private import MiningFrigateBlackBoxSpecification::MinigFrigateConfigurations::*;
 
     //Use Cases of the Mining Frigate. 
     //Define the operational sequence of interactions between the system of interest and the actors
@@ -15,7 +16,7 @@ package SystemUseCases {
     //Main use cases
 
     use case def MineAsteroids {
-        subject highSecMiningFrigate ::> MiningFrigatePackage::highSecMiningFrigate {
+        subject highSecMiningFrigate :> MiningFrigateBlackBoxSpecification::MinigFrigateConfigurations::highSecMiningFrigate {
             perform action activateMiningLaser [2] {
                 accept ActivateMiningLaserCommand;
                 then action reportOreHoldStatus {out shipReport : String;}
@@ -52,7 +53,7 @@ package SystemUseCases {
     }
 
     use case def MonitorAndDetectThreats {
-        subject highSecMiningFrigate ::> MiningFrigatePackage::highSecMiningFrigate {
+        subject highSecMiningFrigate ::> MiningFrigateBlackBoxSpecification::MinigFrigateConfigurations::highSecMiningFrigate {
             perform action scanSpace {
                 then fork;
                     then scanGrid;
@@ -93,7 +94,7 @@ package SystemUseCases {
     }
 
     use case def DeployDefenseDrones { //needs further detail
-        subject highSecMiningFrigate ::> MiningFrigatePackage::highSecMiningFrigate;
+        subject highSecMiningFrigate ::> MiningFrigateBlackBoxSpecification::MinigFrigateConfigurations::highSecMiningFrigate;
         actor pilotPod : PilotPod;
         actor hostilePilotPod : HostilePilotPod [1..*];
         actor drone : Drone [2];
@@ -116,7 +117,7 @@ package SystemUseCases {
     }
 
     use case def DockToStation {
-        subject highSecMiningFrigate ::> MiningFrigatePackage::highSecMiningFrigate {
+        subject highSecMiningFrigate ::> MiningFrigateBlackBoxSpecification::MinigFrigateConfigurations::highSecMiningFrigate {
             event occurrence dockToStationReceived;
             then perform action approachSignature {
                 accept ApproachSignatureAtRangeCommand;
@@ -161,7 +162,7 @@ package SystemUseCases {
     }
     
     use case def WarpToCelestial {
-        subject highSecMiningFrigate ::> MiningFrigatePackage::highSecMiningFrigate {        
+        subject highSecMiningFrigate ::> MiningFrigateBlackBoxSpecification::MinigFrigateConfigurations::highSecMiningFrigate {        
             event occurrence celestialSignatureReceived;
             perform action executeWarpDrive {
                 accept ExecuteWarpDriveCommand;
@@ -195,7 +196,7 @@ package SystemUseCases {
     }
 
     use case def ApproachSignature {
-        subject highSecMiningFrigate ::> MiningFrigatePackage::highSecMiningFrigate {
+        subject highSecMiningFrigate ::> MiningFrigateBlackBoxSpecification::MinigFrigateConfigurations::highSecMiningFrigate {
             event occurrence asteroidSignatureReceived;
             perform action approachSignature {
                 accept ApproachSignatureAtRangeCommand;
@@ -223,7 +224,7 @@ package SystemUseCases {
     }
 
     use case def TransferOre { //needs further detail
-        subject highSecMiningFrigate ::> MiningFrigatePackage::highSecMiningFrigate;
+        subject highSecMiningFrigate ::> MiningFrigateBlackBoxSpecification::MinigFrigateConfigurations::highSecMiningFrigate;
         actor pilotPod : PilotPod;
         actor station : Station;
         objective {
@@ -235,7 +236,7 @@ package SystemUseCases {
     }
     
     use case def UndockFromStation { //needs further detail
-        subject configuredMiningFrigate ::> MiningFrigatePackage::highSecMiningFrigate;
+        subject configuredMiningFrigate ::> MiningFrigateBlackBoxSpecification::MinigFrigateConfigurations::highSecMiningFrigate;
         actor pilotPod : PilotPod;
         actor station : Station;
         objective {
