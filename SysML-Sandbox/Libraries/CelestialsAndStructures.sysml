@@ -13,7 +13,8 @@ package Structures {
     part def Station :> EmittingMassiveObject {
         attribute dockingCapacity : Integer;
         attribute location : String;
-        port dockingPort: DockingPort;
+        port dockingPort : DockingPort;
+        port tracktorBeam : TractorBeamPort; //for docking/undocking operations
     }
 
     part def Gate :> EmittingMassiveObject;

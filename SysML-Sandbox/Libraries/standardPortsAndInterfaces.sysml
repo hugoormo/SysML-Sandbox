@@ -17,6 +17,11 @@ package StdPortsAndInterfaces {
             in item cargo : CargoContainer;
         }
 
+        port def TractorBeamPort {
+            attribute tractorMass : Real;
+            out tractorBeam : TractorBeam;
+        }
+
         //Ship interaction points
 
         port def DroneControllerPort {
@@ -50,16 +55,19 @@ package StdPortsAndInterfaces {
         //Standard ship modules extension points
         port def HighSlotPort {
             in power : PowerSupply;
-            in control : ModuleCommand;
+            in moduleControl : ModuleCommand;
+            out moduleReport : ModuleReport;
         }
 
         port def MediumSlotPort {
             in power : PowerSupply;
-            in control : ModuleCommand;
+            in moduleControl : ModuleCommand;
+            out moduleReport : ModuleReport;
         }
 
         port def LowSlotPort {
-            in control : ModuleCommand;
+            in moduleControl : ModuleCommand;
+            out moduleReport : ModuleReport;
         }
 
         port def RigPort {
@@ -114,6 +122,10 @@ package StdPortsAndInterfaces {
         }
         // Items that Flow Between Domain Objects 
         //Ship Commands 
+
+        item def TractorBeam { 
+            strength : Real; //directional tractor field
+        } 
 
         item def ShipCommand {
             doc /*Payloads of messages within a ship*/
@@ -215,26 +227,29 @@ package StdPortsAndInterfaces {
         //Standard interfaces
         //Ship Extension modules interfaces
         interface def HighSlotInterface {
-            end port hullPort : ~HighSlotPort;
+            end port shipPort : ~HighSlotPort;
             end port modulePort : HighSlotPort;
 
-            flow of PowerSupply from hullPort.power to modulePort.power;
-            flow of ModuleCommand from hullPort.control to modulePort.control;
+            flow of PowerSupply from shipPort.power to modulePort.power;
+            flow of ModuleCommand from shipPort.moduleControl to modulePort.moduleControl;
+            flow of ModuleReport from modulePort.moduleReport to shipPort.moduleReport;
         }
 
         interface def MediumSlotInterface {
-            end port hullPort : ~MediumSlotPort;
+            end port shipPort : ~MediumSlotPort;
             end port modulePort : MediumSlotPort;
 
-            flow of PowerSupply from hullPort.power to modulePort.power;
-            flow of ModuleCommand from hullPort.control to modulePort.control;
+            flow of PowerSupply from shipPort.power to modulePort.power;
+            flow of ModuleCommand from shipPort.moduleControl to modulePort.moduleControl;
+            flow of ModuleReport from modulePort.moduleReport to shipPort.moduleReport;
         }
 
         interface def LowSlotInterface {
-            end port hullPort : ~LowSlotPort;
+            end port shipPort : ~LowSlotPort;
             end port modulePort : LowSlotPort;
 
-            flow of ModuleCommand from hullPort.control to modulePort.control;
+            flow of ModuleCommand from shipPort.moduleControl to modulePort.moduleControl;
+            flow of ModuleReport from modulePort.moduleReport to shipPort.moduleReport;
         }
 
         //Aggression interfaces

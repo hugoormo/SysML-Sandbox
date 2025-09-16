@@ -13,6 +13,13 @@ package PilotPodsAndSpaceships {
         attribute fleetSize: Integer;
         port podPort: PodPort;
         ref part spaceship : Spaceship[0..1];
+
+        action undockFromStation { 
+            doc /*
+                * Undock from a station.
+                * The pilotPod communicates with the station. The ship is not initialized.
+                */
+    }
     }
 
     item def SkillsSetPilot {
@@ -78,6 +85,7 @@ package PilotPodsAndSpaceships {
         port rigPort : RigPort[3];
         port podPort : ~PodPort[1];
         port dockingPort : ~DockingPort[1];
+        port tractorBeamPort : TractorBeamPort;
 
         //Ship Interaction ports
         port longRangeDirectionalSensorPort : LongRangeSensorDirectionalPort;
@@ -116,7 +124,6 @@ package PilotPodsAndSpaceships {
             doc /* The spaceship is boarded inside a station in the docking pad, available for 
                 * refitting, resupply, or cargo transfer. 
                 */
-            exit action ::> undockFromStation;
         }
         state InGrid {
             doc /* The spaceship is in open space, near asteroids, stations, or other celestial objects. 
@@ -297,24 +304,19 @@ package PilotPodsAndSpaceships {
     }
 
     action executeWarpDrive {
-                doc /* Engage the warp drive to travel to a celestial destination. 
-                */
-                in warpCommandPort : PodPort;
-                in warpBubbleEnd : CelestialSignature;
-                in atRange : Real;
+        doc /* Engage the warp drive to travel to a celestial destination. 
+        */
+        in warpCommandPort : PodPort;
+        in warpBubbleEnd : CelestialSignature;
+        in atRange : Real;
 
-                accept ExecuteWarpDriveCommand : ShipCommand via warpCommandPort;
-                //technology dependent actions will be added by the developers here.
-                then action reportStatusWarpDrive {out shipReport : ShipReport;}
-                then send reportStatusWarpDrive.shipReport via warpCommandPort; //warpDrive engaged
-                //technology dependent actions will be added by the developers here.
-                then action reportStatusDestination {out shipReport : String;}
-                then send reportStatusDestination.shipReport via warpCommandPort; //Destination reached
-            }   
-    
-    action undockFromStation { //technology dependent actions will be added by the developers here.
-        doc /*Undock from a station.*/
-
+        accept ExecuteWarpDriveCommand : ShipCommand via warpCommandPort;
+        //technology dependent actions will be added by the developers here.
+        then action reportStatusWarpDrive {out shipReport : ShipReport;}
+        then send reportStatusWarpDrive.shipReport via warpCommandPort; //warpDrive engaged
+        //technology dependent actions will be added by the developers here.
+        then action reportStatusDestination {out shipReport : String;}
+        then send reportStatusDestination.shipReport via warpCommandPort; //Destination reached
     }
             
     

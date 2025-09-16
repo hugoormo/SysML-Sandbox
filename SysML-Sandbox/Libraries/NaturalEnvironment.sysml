@@ -6,6 +6,12 @@ package NaturalEnvironment {
         attribute mass : Real;
         port emissionPort : EmissionPort;
     }
+
+    item def Energy {
+        attribute amount : Real; //[GJ]
+    }
+    item energy;
+
     part def SolarSystem {
         part sun[1] : Sun;
         part planet[1..*] : Planet {

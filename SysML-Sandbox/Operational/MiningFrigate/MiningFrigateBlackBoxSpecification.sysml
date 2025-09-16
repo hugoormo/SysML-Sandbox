@@ -63,6 +63,7 @@
             //Other ports redefine the imperial ship definition or add to the specific ship
             port podPort :>> podPort;
             port dockingPort :>> dockingPort;
+            port tractorBeamPort :>> tractorBeamPort;
             port droneControlPort : DroneControllerPort[2];
             port longRangeGravimetricDirectionalSensorPort : LongRangeGravimetricSensorDirectionalPort :>> longRangeDirectionalSensorPort;
             port gridGravimetricSensorPort : GridGravimetricSensorPort :>> gridSensorPort;
@@ -148,7 +149,6 @@
                 action :>> reportStatusDestination {out shipReport : String;}
                 send reportStatusDestination.shipReport via warpCommandPort;
             }
-            action :>> undockFromStation;
             action initializeDroneServices;
             action transferOre;
         }
@@ -491,8 +491,6 @@
             to SystemUseCases::DeployDefenseDrones;
         dependency MinigFrigateConfigurations::highSecMiningFrigate::highSecMiningFrigateStates::transferOre
             to SystemUseCases::TransferOre;
-        dependency MinigFrigateConfigurations::highSecMiningFrigate::highSecMiningFrigateStates::undockFromStation
-            to SystemUseCases::UndockFromStation;
     }
     
     package ViesAndViewDefinitions {

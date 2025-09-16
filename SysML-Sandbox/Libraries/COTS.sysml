@@ -6,7 +6,10 @@
 
     //COTS Imperial standrard ship components
     abstract part def ImperialStandardModule :> SimpleSpaceshipComponent {
-        action imperialStandardModuleAction;
+        action imperialStandardModuleAction {
+            in moduleCommand : ModuleCommand;
+            out moduleReport : ModuleReport;
+        }
     }
  
     //COTS Modules Definitions 
@@ -24,9 +27,8 @@
         
         // **Action: Extract Ore
         action extractOre :>> imperialStandardModuleAction { 
-            in miningLaserPowerSupply = highSlot.power;
-            in miningLaserTarget = highSlot.control;
-            out miningLaserStatus = highSlot.control; 
+            in :>> moduleCommand = highSlot.moduleControl;
+            out :>> moduleReport = highSlot.moduleReport;
         }
     }
 
@@ -73,7 +75,10 @@
 
         port lowSlot : ~LowSlotPort;
 
-        action boostSpeed :>> imperialStandardModuleAction;
+        action boostSpeed :>> imperialStandardModuleAction {
+            in :>> moduleCommand = lowSlot.moduleControl;
+            out :>> moduleReport = lowSlot.moduleReport;
+        }
     }
 
     part def SmallShieldExtenderI :> ImperialStandardModule {
@@ -85,7 +90,10 @@
 
         port mediumSlot : ~MediumSlotPort;
 
-        action extendShield :>> imperialStandardModuleAction;
+        action extendShield :>> imperialStandardModuleAction {
+            in :>> moduleCommand = mediumSlot.moduleControl;
+            out :>> moduleReport = mediumSlot.moduleReport;
+        }
     }
 
     part def SmallCapBatteryI :> ImperialStandardModule {
@@ -110,7 +118,10 @@
 
         port mediumSlot : ~MediumSlotPort;
 
-        action scanAsteroid {out surveyReport : ModuleReport;} :>> imperialStandardModuleAction;
+        action scanAsteroid :>> imperialStandardModuleAction {
+            in :>> moduleCommand = mediumSlot.moduleControl;
+            out :>> moduleReport = mediumSlot.moduleReport;
+        }
     }
 
     part def WarpCoreStabilizerI :> ImperialStandardModule {

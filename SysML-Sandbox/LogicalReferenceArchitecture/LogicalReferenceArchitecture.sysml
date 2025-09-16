@@ -31,7 +31,7 @@ package LogicalReferenceArchitecture {
                 * from the external environment.
                 * (S. Friedenthal et al.)
                 */
-            port commandControlGallente : LogicalShipControlPort;
+            port commandControlGallentePort : LogicalShipControlPort[0..*];
             port computationNetworkPort : LogicalComputationNetworkPort;
             port powerGridPort : LogicalPowerGridPort;
         }
@@ -52,7 +52,7 @@ package LogicalReferenceArchitecture {
         }
 
         port def LogicalPowerGridPort {
-            out powerGrid : Real;
+            out powerGridEnergy : NaturalEnvironment::Energy;
         }
 
 
