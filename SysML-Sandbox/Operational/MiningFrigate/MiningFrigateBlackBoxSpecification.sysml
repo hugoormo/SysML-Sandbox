@@ -67,7 +67,6 @@
             port droneControlPort : DroneControllerPort[2];
             port longRangeGravimetricDirectionalSensorPort : LongRangeGravimetricSensorDirectionalPort :>> longRangeDirectionalSensorPort;
             port gridGravimetricSensorPort : GridGravimetricSensorPort :>> gridSensorPort;
-            port shipCommsPort :>> shipCommsPort;
             port xPropulsionPort :>> xPropulsionPort[4];
             port zPropulsionPort :>> zPropulsionPort[2];
             port yPropulsionPort :>> yPropulsionPort[2];

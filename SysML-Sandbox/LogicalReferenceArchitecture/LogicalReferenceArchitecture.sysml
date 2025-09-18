@@ -15,6 +15,7 @@ package LogicalReferenceArchitecture {
         item def LogicalPowerSupply;
         item def LogicalControlCommand;
         item def LogicalShipReport;
+        item def LogicalAnalogSignal;
         
         //Logical part
         part def LogicalPart {
@@ -55,6 +56,10 @@ package LogicalReferenceArchitecture {
             out powerGridEnergy : NaturalEnvironment::Energy;
         }
 
+        port def LogicalAnalogPort {
+            out logicalAnalogSignal : LogicalAnalogSignal;
+        }
+
 
         //Ship interfaces
         interface def LogicalControlIF {
@@ -75,6 +80,11 @@ package LogicalReferenceArchitecture {
         interface def LogicalDiagnosticsIF {
             end port supplierPort : LogicalDiagnosticsPort;
             end port consumerPort : ~LogicalPowerGridPort;
+        }
+
+        interface def LogicalAnalogSignalIF {
+            end port supplierPort : LogicalAnalogPort;
+            end port consumerPort : ~LogicalAnalogPort;
         }
     }
 }

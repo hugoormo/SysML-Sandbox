@@ -32,8 +32,8 @@ package StdPortsAndInterfaces {
 
         port def GridSensorPort :> EmissionPort;
 
-        port def ShipCommsPort {
-            inout item shipComm : ShipComms;
+        port def PodCommsPort {
+            inout item shipComm : PodComms;
         }
 
         port def MainPropulsionPort {
@@ -81,7 +81,7 @@ package StdPortsAndInterfaces {
 
         //Flowing Items
         //Communication
-        item def ShipComms {
+        item def PodComms {
             doc /*Payloads of communication messages between pilots*/
             attribute pilotPodComms : String;
         }

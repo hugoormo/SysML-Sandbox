@@ -151,13 +151,13 @@ package OperationalConcept {
                 */
         }
 
-        message of ShipComms from miningfleetCommander.targetAsteroidBeltSent to minerPilotPod.targetAsteroidBeltReceived; 
-        then message of ShipComms from miningfleetCommander.targetAsteroidSent to minerPilotPod.targetAsteroidReceived;
-        message of ShipComms from minerPilotPod.threatDetectedSent to miningfleetCommander.threatDetectedReceived;
-        message of ShipComms from miningfleetCommander.threatNeutralizeSent to minerPilotPod.threatNeutralizeReceived;
-        message of ShipComms from minerPilotPod.canOutSend to logisticsPilotPod.canOutReceived;
-		message of ShipComms from logisticsPilotPod.transportHoldFullSent to miningfleetCommander.transportHoldFullReceived;
-		message of ShipComms from miningfleetCommander.transportReturnSent to logisticsPilotPod.transportReturnReceived;
+        message of PodComms from miningfleetCommander.targetAsteroidBeltSent to minerPilotPod.targetAsteroidBeltReceived; 
+        then message of PodComms from miningfleetCommander.targetAsteroidSent to minerPilotPod.targetAsteroidReceived;
+        message of PodComms from minerPilotPod.threatDetectedSent to miningfleetCommander.threatDetectedReceived;
+        message of PodComms from miningfleetCommander.threatNeutralizeSent to minerPilotPod.threatNeutralizeReceived;
+        message of PodComms from minerPilotPod.canOutSend to logisticsPilotPod.canOutReceived;
+		message of PodComms from logisticsPilotPod.transportHoldFullSent to miningfleetCommander.transportHoldFullReceived;
+		message of PodComms from miningfleetCommander.transportReturnSent to logisticsPilotPod.transportReturnReceived;
 	}
 	
 	//other use cases would be required for Low Sec, Null Sec and W-Space.

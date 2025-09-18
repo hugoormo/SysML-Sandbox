@@ -12,6 +12,7 @@ package PilotPodsAndSpaceships {
         attribute controlEfficiency : Real default 0.6;         // Efficiency of command execution (%)
         attribute fleetSize: Integer;
         port podPort: PodPort;
+        port podCommsPort : PodCommsPort;
         ref part spaceship : Spaceship[0..1];
 
         action undockFromStation { 
@@ -19,7 +20,12 @@ package PilotPodsAndSpaceships {
                 * Undock from a station.
                 * The pilotPod communicates with the station. The ship is not initialized.
                 */
-    }
+        }
+        action logicalTransferOre {
+                doc /*
+                    * Unload ship cargo into station.
+                    */
+        }
     }
 
     item def SkillsSetPilot {
@@ -90,7 +96,6 @@ package PilotPodsAndSpaceships {
         //Ship Interaction ports
         port longRangeDirectionalSensorPort : LongRangeSensorDirectionalPort;
         port gridSensorPort : GridSensorPort;
-        port shipCommsPort : ShipCommsPort;
         port xPropulsionPort : MainPropulsionPort[1..*];
         port yPropulsionPort : RotationPropulsionPort[1..*];
         port zPropulsionPort : RotationPropulsionPort[1..*];
