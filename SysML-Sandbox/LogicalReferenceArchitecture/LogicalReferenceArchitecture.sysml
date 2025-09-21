@@ -57,7 +57,9 @@ package LogicalReferenceArchitecture {
         }
 
         port def LogicalAnalogPort {
-            out logicalAnalogSignal : LogicalAnalogSignal;
+            out logicalAnalogSignal1 : LogicalAnalogSignal;
+            out logicalAnalogSignal2 : LogicalAnalogSignal;
+            out logicalAnalogSignal3 : LogicalAnalogSignal;
         }
 
 

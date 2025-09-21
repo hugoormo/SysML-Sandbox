@@ -96,8 +96,12 @@ package StdPortsAndInterfaces {
             attribute type: String;
         }
 
+        item def Report;
+
         item def ShipReport{
-            attribute type: String;
+            attribute ShipReportHeader: String;
+            attribute publicKeyShip : String;
+            attribute payload : Report;
         }
 
         item def DroneReport :> ShipReport {
@@ -120,20 +124,22 @@ package StdPortsAndInterfaces {
         item def ModuleReport {
             attribute type: String;
         }
-        // Items that Flow Between Domain Objects 
-        //Ship Commands 
 
-        item def TractorBeam { 
-            strength : Real; //directional tractor field
-        } 
+        item def CommandPayload {
+            attribute payloadItem[1..*] : String;
+        }
 
         item def ShipCommand {
             doc /*Payloads of messages within a ship*/
-            attribute pilotPodCommandHeader : String;
+            attribute ShipCommandHeader : String;
+            attribute publicKeyPod: String;
+            attribute payload : CommandPayload;
         }
 
-        item def DroneCommand :> ShipCommand {
-            attribute droneID: String;
+        item def DronesAttackTarget :> ShipCommand {
+            attribute :>> payload {
+                target : Signature :>> payloadItem;
+            } 
         } 
 
         item def  ActivateMiningLaserCommand :> ShipCommand;
@@ -166,6 +172,10 @@ package StdPortsAndInterfaces {
         }
         
         item def  DetectThreatCommand :> ShipCommand;
+
+        item def LockTarget :> ShipCommand {
+            attribute signatureGrid : GridSignature;
+        }
         
         item def  EngageDefensesCommand :> ShipCommand{
             attribute signatureGrid : GridSignature;
@@ -185,6 +195,11 @@ package StdPortsAndInterfaces {
             attribute waypoints: String;
             attribute distance: Real;
         }
+        // Items that Flow Between Domain Objects 
+
+        item def TractorBeam { 
+            strength : Real; //directional tractor field
+        } 
 
         //Energy items
         item def FirePower {
