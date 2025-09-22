@@ -1,13 +1,14 @@
  package COTS {
  	
  	private import ScalarValues::*;
- 	private import StdPortsAndInterfaces::ImperialTechnology::*;
+ 	private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardItems::*;
+    private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardInteractionPoints::*;
  	private import RollupAnalysis::*; 
 
     //COTS Imperial standrard ship components
     abstract part def ImperialStandardModule :> SimpleSpaceshipComponent {
         action imperialStandardModuleAction {
-            in moduleCommand : ModuleCommand;
+            in moduleCommand : ModuleToggleCommand;
             out moduleReport : ModuleReport;
         }
     }

@@ -23,7 +23,6 @@ package MissionRequirements {
 	
 	private import NaturalEnvironment::*;
 	private import Structures::*;
-	private import StdPortsAndInterfaces::ImperialTechnology::*;
 	private import OperationalDomain::*;
 	private import ScalarValues::*;
 	private import StakeholderConcerns::*;
@@ -98,7 +97,7 @@ package OperationalConcept {
 	private import ScalarValues::*;
 	private import NaturalEnvironment::*;
 	private import Structures::*;
-	private import StdPortsAndInterfaces::ImperialTechnology::*;
+	private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardItems::*;
 
 	doc /*Overview: 
 		* The Mining Corporation's fleet of mining frigates operates in High-Security (High Sec), Low-Security (Low Sec), 

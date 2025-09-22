@@ -4,7 +4,7 @@ package OperationalDomain {
 	private import ISQ::*;
 	private import SI::*;
 	private import ParametersOfInterestMetadata::*;
-    private import StdPortsAndInterfaces::ImperialTechnology::*;
+    private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardInteractionPoints::*;
     private import NaturalEnvironment::*;
     private import Structures::*;
     private import PilotPodsAndSpaceships::*;

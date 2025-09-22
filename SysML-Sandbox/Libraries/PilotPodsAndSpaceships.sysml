@@ -1,7 +1,8 @@
 package PilotPodsAndSpaceships {
 
     private import NaturalEnvironment::*;
-    private import StdPortsAndInterfaces::ImperialTechnology::*;
+    private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardInteractionPoints::*;
+    private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardItems::*;  
     private import ScalarValues::*;
     private import COTS::*;
     private import RollupAnalysis::*;

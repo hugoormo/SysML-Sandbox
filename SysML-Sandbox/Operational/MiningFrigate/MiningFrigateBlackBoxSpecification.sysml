@@ -6,7 +6,9 @@
 	private import ParametersOfInterestMetadata::*;
 	private import OperationalDomain::*;
     private import COTS::*;
-    private import StdPortsAndInterfaces::ImperialTechnology::*;
+    private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardInteractionPoints::*;
+    private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardItems::*;
+    private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardInterfaces::*;
     private import StdPortsAndInterfaces::GallenteTechnology::*;
     private import PilotPodsAndSpaceships::*;
 

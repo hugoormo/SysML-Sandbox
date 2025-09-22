@@ -5,7 +5,7 @@ package SystemUseCases {
     private import Structures::*;
     private import OperationalDomain::*;
     private import ScalarValues::*;
-    private import StdPortsAndInterfaces::ImperialTechnology::*;
+    private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardItems::*;
     private import COTS::*;
     private import PilotPodsAndSpaceships::*;
     private import MiningFrigateBlackBoxSpecification::MinigFrigateConfigurations::*;
@@ -18,7 +18,7 @@ package SystemUseCases {
     use case def MineAsteroids {
         subject highSecMiningFrigate :> MiningFrigateBlackBoxSpecification::MinigFrigateConfigurations::highSecMiningFrigate {
             perform action activateMiningLaser [2] {
-                accept ActivateMiningLaserCommand;
+                accept activateMiningLaserCommand : ModuleToggleCommand;
                 then action reportOreHoldStatus {out shipReport : String;}
                 if highSecMiningFrigate.cargoHoldStatus == 1 {
                     send ShipCommand(reportOreHoldStatus.shipReport) to pilotPod; //Mining report
@@ -120,7 +120,7 @@ package SystemUseCases {
         subject highSecMiningFrigate ::> MiningFrigateBlackBoxSpecification::MinigFrigateConfigurations::highSecMiningFrigate {
             event occurrence dockToStationReceived;
             then perform action approachSignature {
-                accept ApproachSignatureAtRangeCommand;
+                accept ApproachSignatureCommand;
                 //more actions will come here
                 then action reportStatusApproach {out shipReport : String;}
                 then send ShipCommand(reportStatusApproach.shipReport) to pilotPod;//Approach in progress
@@ -199,7 +199,7 @@ package SystemUseCases {
         subject highSecMiningFrigate ::> MiningFrigateBlackBoxSpecification::MinigFrigateConfigurations::highSecMiningFrigate {
             event occurrence asteroidSignatureReceived;
             perform action approachSignature {
-                accept ApproachSignatureAtRangeCommand;
+                accept ApproachSignatureCommand;
                 //more actions will come here
                 then action reportStatusApproach {out shipReport : String;}
                 then send ShipCommand(reportStatusApproach.shipReport) to pilotPod;//Approach in progress

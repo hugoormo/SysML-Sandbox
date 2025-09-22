@@ -6,7 +6,7 @@ package Structures {
     */
 
     private import ScalarValues::*;
-    private import StdPortsAndInterfaces::ImperialTechnology::*;
+    private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardInteractionPoints::*;
     private import NaturalEnvironment::*;
     
 

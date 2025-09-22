@@ -6,16 +6,42 @@ package LogicalReferenceArchitecture {
         */ 
 
     private import ScalarValues::*;
+    private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardItems::*;
 
     package LogicalDefinitions {
         //logical parts, ports and interfaces
-        //Logical items
+        //Logical items reflect the phisical items
         item def LogicalComputationService;
         item def LogicalDiagnostics;
         item def LogicalPowerSupply;
-        item def LogicalControlCommand;
+        item def LogicalControlCommand :> ShipCommand;
+        item def LogicalDronesCommand :> DronesCommand;
+        item def LogicalEngageDefensesCommand :> EngageDefensesCommand;
+        item def LogicalDirectionalScanCommand :> DirectionalScanCommand;
+        item def LogicalModuleToggleCommand :> LogicalControlCommand;
+        item def LogicalModule1ToggleCommand :> LogicalModuleToggleCommand;
+        item def LogicalModule2ToggleCommand :> LogicalModuleToggleCommand;
+        item def LogicalModule3ToggleCommand :> LogicalModuleToggleCommand;
+        item def LogicalModule4ToggleCommand :> LogicalModuleToggleCommand;
+        item def LogicalModule5ToggleCommand :> LogicalModuleToggleCommand;
+        item def LogicalModule6ToggleCommand :> LogicalModuleToggleCommand;
+        item def LogicalModule7ToggleCommand :> LogicalModuleToggleCommand;
+        item def LogicalNavigationCommand :> NavigationCommand {
+            attribute destinationSignature : LogicalSignature :>> destinationSignature;
+        }
+        item def LogicalExecuteWarpDriveCommand :> LogicalNavigationCommand;
+        item def LogicalApproachSignatureCommand :> LogicalNavigationCommand;
+        item def LogicalOrbitSignatureCommand :> LogicalNavigationCommand;
+        item def LogicalKeepSignatureAtRangeCommand  :> LogicalNavigationCommand;
+        item def LogicalDockToStationCommand :> LogicalNavigationCommand;
+        item def LogicalEngagePropulsionCommand :> LogicalNavigationCommand;
+        item def LogicalLockTarget :> LockTarget;
         item def LogicalShipReport;
-        item def LogicalAnalogSignal;
+        item def LogicalAnalogSignal :> AnalogSignal;
+        item def LogicalAlignmentSignal :> AlignmentSignal;
+        item def LogicalSignature :> Signature;
+        item def LogicalCelestialSignature :> CelestialSignature;
+        item def LogicalGridSignature :> GridSignature; 
         
         //Logical part
         part def LogicalPart {
@@ -32,7 +58,7 @@ package LogicalReferenceArchitecture {
                 * from the external environment.
                 * (S. Friedenthal et al.)
                 */
-            port commandControlGallentePort : LogicalShipControlPort[0..*];
+            port commandControlGallentePort : LogicalShipCommandPort[0..*];
             port computationNetworkPort : LogicalComputationNetworkPort;
             port powerGridPort : LogicalPowerGridPort;
         }
@@ -43,7 +69,7 @@ package LogicalReferenceArchitecture {
             out computationResponse : LogicalComputationService;
         }
 
-        port def LogicalShipControlPort {
+        port def LogicalShipCommandPort {
             out shipControl : LogicalControlCommand;
             in shipReport : LogicalShipReport;
         }
@@ -62,11 +88,15 @@ package LogicalReferenceArchitecture {
             out logicalAnalogSignal3 : LogicalAnalogSignal;
         }
 
+        port def LogicalAlignmentPort {
+            out logicalAlignmentSignal : LogicalAlignmentSignal;
+        }
+
 
         //Ship interfaces
         interface def LogicalControlIF {
-            end port supplierPort : LogicalShipControlPort;
-            end port consumerPort : ~LogicalShipControlPort;
+            end port supplierPort : LogicalShipCommandPort;
+            end port consumerPort : ~LogicalShipCommandPort;
         }
 
         interface def LogicalComputationServicesIF {
@@ -87,6 +117,11 @@ package LogicalReferenceArchitecture {
         interface def LogicalAnalogSignalIF {
             end port supplierPort : LogicalAnalogPort;
             end port consumerPort : ~LogicalAnalogPort;
+        }
+
+        interface def LogicalAlignmentSignalIF {
+            end port supplierPort : LogicalAlignmentPort;
+            end port consumerPort : ~LogicalAlignmentPort;
         }
     }
 }
