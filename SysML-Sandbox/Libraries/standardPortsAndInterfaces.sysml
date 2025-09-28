@@ -15,8 +15,48 @@ package StdPortsAndInterfaces {
 
             //Pod and Station docking points
             port def PodPort {
-                in item shipReport : ShipReport;
-                out item command : ShipCommand;
+                port droneCommandsSubPort : DroneCommandsSubPort;
+                port modulesCommandsSubPort : ModuleCommandsSubPort;
+                port navigationCommandsSubPort : NavigationCommandsSubPort;
+                port scanCommandsSubPort : ScanCommandsSubPort;
+                port targetingCommandsSubPort : TargetingCommandsSubPort;
+                
+            }
+            port def DroneCommandsSubPort {
+                out releaseDronesToGrid : ReleaseDronesToGrid;
+                out recallDrones : RecallDrones;
+                out reconnectDrones : ReconnectDrones;
+                out engageDronesCommand : EngageDronesCommand;
+                in dronesReport : DronesReport;
+            }
+            port def ModuleCommandsSubPort {
+                out module1ToggleCommand : Module1ToggleCommand;
+                out module2ToggleCommand : Module1ToggleCommand;
+                out module3ToggleCommand : Module1ToggleCommand;
+                out module4ToggleCommand : Module1ToggleCommand;
+                out module5ToggleCommand : Module1ToggleCommand;
+                out module6ToggleCommand : Module1ToggleCommand;
+                out module7ToggleCommand : Module1ToggleCommand;
+                in moduleReport : ModuleReport;
+            }
+            port def NavigationCommandsSubPort {
+                out executeWarpDriveCommand : ExecuteWarpDriveCommand;
+                out approachSignatureCommand : ApproachSignatureCommand;
+                out orbitSignatureCommand : OrbitSignatureCommand;
+                out keepSignatureAtRangeCommand : KeepSignatureAtRangeCommand;
+                out dockToStationCommand : DockToStationCommand;
+                out engagePropulsionCommand : EngagePropulsionCommand;
+                in navigationReport : NavigationReport;
+            }
+
+            port def ScanCommandsSubPort {
+                out directionalScanCommand : DirectionalScanCommand;
+                in scanReport : ScanReport;
+            }
+
+            port def TargetingCommandsSubPort {
+                out lockTarget : LockTarget;
+                in targetLockReport : TargetLockReport;
             }
 
             port def DockingPort {
@@ -30,10 +70,7 @@ package StdPortsAndInterfaces {
             }
 
             //Ship interaction points
-            port def DroneControllerPort {
-                in item droneCommand : DronesCommand;
-                out item droneReport : DroneReport;
-            }
+            
             port def LongRangeSensorDirectionalPort :> EmissionPort;
 
             port def GridSensorPort :> EmissionPort;
@@ -44,6 +81,14 @@ package StdPortsAndInterfaces {
 
             port def MainPropulsionPort {
                 in item disruptionField : WebifierDisruptionField;
+            }
+
+            port def DroneControllerPort {
+                out releaseDronesToGrid : ReleaseDronesToGrid;
+                out recallDrones : RecallDrones;
+                out reconnectDrones : ReconnectDrones;
+                out engageDronesCommand : EngageDronesCommand;
+                in dronesReport : DronesReport;
             }
 
             port def RotationPropulsionPort;
@@ -59,17 +104,14 @@ package StdPortsAndInterfaces {
             }
 
             //Standard ship modules extension points
-            port def HighSlotPort {
+            port def HighSlotPort :> LowSlotPort {
                 in power : PowerSupply;
-                in moduleControl : ModuleToggleCommand;
+                in activationSurgeLine : Real; // [GJ]
                 in turretAlignment: AlignmentSignal; 
-                out moduleReport : ModuleReport;
             }
 
-            port def MediumSlotPort {
+            port def MediumSlotPort :> LowSlotPort {
                 in power : PowerSupply;
-                in moduleControl : ModuleToggleCommand;
-                out moduleReport : ModuleReport;
             }
 
             port def LowSlotPort {
@@ -96,52 +138,44 @@ package StdPortsAndInterfaces {
                     */
                 attribute pilotPodComms : String;
             }
-
-            //Command and Control items
-            item def Report;
-            item def ModuleReport :> Report{
-                attribute type: String;
-            }
-
-
-            item def ShipReport{
-                attribute ShipReportHeader: String;
-                attribute publicKeyShip : String;
-                attribute payload : Report;
-            }
-
-            item def DroneReport :> ShipReport {
-                attribute DroneID: String;
-            } 
-
+            item def AnalogSignal;
             item def CargoContainer {
                 attribute type : String;
                 attribute weight : Real;
             }
-
             item def PowerSupply {
-                attribute energyTransfer : Real;
-            }
-     
-            item def CommandPayload {
-                attribute payloadItem : String;
+                attribute electricPower : Real; // [MW]
             }
 
+            //Command, Reports and Control items
+            //Reports
+            item def ReportPayload;
+            item def ShipReport{
+                attribute ShipReportHeader: String;
+                attribute publicKeyShip : String;
+                attribute payload : ReportPayload;
+            }
+            item def ModuleReport :> ShipReport;
+            item def DronesReport :> ShipReport;
+            item def NavigationReport :> ShipReport;
+            item def ScanReport :> ShipReport;
+            item def TargetLockReport :>ShipReport;
+
+            //Ship Commands
             item def ShipCommand {
                 doc /*Payloads of messages within a ship*/
                 attribute ShipCommandHeader : String;
                 attribute publicKeyPod: String;
             }
-
-            item def DronesCommand :> ShipCommand {
-                attribute droneID[1..2] : String;
+            item def DronesCommand :> ShipCommand;
+            item def ReleaseDronesToGrid :> DronesCommand;
+            item def RecallDrones :> DronesCommand;
+            item def ReconnectDrones :> DronesCommand;
+            item def EngageDronesCommand :> DronesCommand {
+                attribute targetsignature : GridSignature;
             }
-            item def  SelectDronesForDeploymentCommand :> DronesCommand;
-            item def  EngageDefensesCommand :> DronesCommand {
-                attribute signatureGrid : GridSignature;
-            }
 
-            item def  ModuleToggleCommand :> ShipCommand {
+            item def ModuleToggleCommand :> ShipCommand {
                 attribute overheat : Boolean;
             }
 
@@ -153,12 +187,11 @@ package StdPortsAndInterfaces {
             item def Module6ToggleCommand :> ModuleToggleCommand;
             item def Module7ToggleCommand :> ModuleToggleCommand;
             
-            item def  DirectionalScanCommand :> ShipCommand {
+            item def DirectionalScanCommand :> ShipCommand {
                 attribute range; 
                 attribute direction; 
                 attribute coneAngle;
             }
-            item def AnalogSignal;
 
             //Ship Navigation Commands
             item def Course;
@@ -168,8 +201,8 @@ package StdPortsAndInterfaces {
             }
             item def ExecuteWarpDriveCommand :> NavigationCommand;   
             item def ApproachSignatureCommand :> NavigationCommand;
-            item def orbitSignatureCommand :> NavigationCommand;
-            item def keepSignatureAtRangeCommand :> NavigationCommand;
+            item def OrbitSignatureCommand :> NavigationCommand;
+            item def KeepSignatureAtRangeCommand :> NavigationCommand;
             item def DockToStationCommand :> NavigationCommand;
             
             item def EngagePropulsionCommand :> NavigationCommand {
@@ -197,7 +230,12 @@ package StdPortsAndInterfaces {
             }
             item def UndockFromStationCommand :> StationCommand;
             item def TransferOreCommand :> StationCommand;
-            item def DockingRequestAccepted :> StationCommand;  
+            item def DockingRequestAccepted :> StationCommand;
+
+            //Drone Commands
+            item def DroneCommand; 
+
+            item def DroneReport; 
             
             // Items that Flow Between Domain Objects 
             item def TractorBeam { 
@@ -287,10 +325,13 @@ package StdPortsAndInterfaces {
 
             //Communication interfaces
             interface def DroneIF {
-                end droneControllerPort : ~DroneControllerPort;
-                end droneControllPort : DroneControllerPort;
-                flow of DronesCommand from droneControllerPort.droneCommand to droneControllPort.droneCommand;
-                flow of DroneReport from droneControllPort.droneReport to droneControllerPort.droneReport;     
+                end droneControllerPort : DroneControllerPort;
+                end droneControllPort : ~DroneControllerPort;
+                flow of ReleaseDronesToGrid from droneControllerPort.releaseDronesToGrid to droneControllPort.releaseDronesToGrid;
+                flow of RecallDrones from droneControllerPort.recallDrones to droneControllPort.recallDrones;
+                flow of ReconnectDrones from droneControllerPort.reconnectDrones to droneControllPort.reconnectDrones;
+                flow of EngageDronesCommand from droneControllerPort.engageDronesCommand to droneControllPort.engageDronesCommand;
+                flow of DronesReport from droneControllPort.dronesReport to droneControllerPort.dronesReport;
             }
 
             //Command interfaces
@@ -298,8 +339,7 @@ package StdPortsAndInterfaces {
                 end controlSend : PodPort;
                 end controlReceive : ~PodPort;
                 //flows are defined within the interface
-                flow of ShipCommand from controlSend.command to controlReceive.command;
-                flow of ShipReport from controlReceive.shipReport to controlSend.shipReport;
+                
             }
 
             //Logistic interfaces

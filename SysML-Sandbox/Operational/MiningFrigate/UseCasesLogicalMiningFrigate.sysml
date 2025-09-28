@@ -1,5 +1,5 @@
 package LogicalMiningFrigateUseCases {
 
-    private import LogicalMiningFrigate::*;
+    private import LogicalGrayBoxMiningFrigate::*;
 
 }

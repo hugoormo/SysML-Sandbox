@@ -1,13 +1,13 @@
 package NScanners {
     
-    private import LogicalMiningFrigate::*;
+    private import LogicalGrayBoxMiningFrigate::*;
     private import ScalarValues::*;
     private import SI::*;
     private import ParametersOfInterestMetadata::*;
     private import LogicalReferenceArchitecture::LogicalDefinitions::*;
     private import StdPortsAndInterfaces::ImperialTechnology::*;
 
-    part logicalMiningFrigateVentureClass : LogicalMiningFrigateVentureClass {
+    part logicalWhiteBoxMiningFrigateVentureClass :> logicalGrayBoxMiningFrigateVentureClass {
 
         part longRangeDirectionalSensor : LogicalPart :>> longRangeDirectionalSensor {
             port :>> longRangeDirectionalSensorPort;

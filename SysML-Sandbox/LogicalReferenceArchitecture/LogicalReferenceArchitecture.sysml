@@ -14,10 +14,15 @@ package LogicalReferenceArchitecture {
         item def LogicalComputationService;
         item def LogicalDiagnostics;
         item def LogicalPowerSupply;
+        item def LogicalLowPowerSupply;
         item def LogicalControlCommand :> ShipCommand;
-        item def LogicalDronesCommand :> DronesCommand;
-        item def LogicalEngageDefensesCommand :> EngageDefensesCommand;
+        item def LogicalReleaseDronesToGrid :> ReleaseDronesToGrid;
+        item def LogicalReconnectDrones :> ReconnectDrones;
+        item def LogicalEngageDronesCommand :> EngageDronesCommand;
+        item def LogicalDronesReport :> DronesReport;
+        item def LogicalRecallDrones :> RecallDrones;
         item def LogicalDirectionalScanCommand :> DirectionalScanCommand;
+        item def LogicalScanReport :> ScanReport;
         item def LogicalModuleToggleCommand :> LogicalControlCommand;
         item def LogicalModule1ToggleCommand :> LogicalModuleToggleCommand;
         item def LogicalModule2ToggleCommand :> LogicalModuleToggleCommand;
@@ -26,6 +31,7 @@ package LogicalReferenceArchitecture {
         item def LogicalModule5ToggleCommand :> LogicalModuleToggleCommand;
         item def LogicalModule6ToggleCommand :> LogicalModuleToggleCommand;
         item def LogicalModule7ToggleCommand :> LogicalModuleToggleCommand;
+        item def LogicalModuleReport :> ModuleReport;
         item def LogicalNavigationCommand :> NavigationCommand {
             attribute destinationSignature : LogicalSignature :>> destinationSignature;
         }
@@ -35,6 +41,7 @@ package LogicalReferenceArchitecture {
         item def LogicalKeepSignatureAtRangeCommand  :> LogicalNavigationCommand;
         item def LogicalDockToStationCommand :> LogicalNavigationCommand;
         item def LogicalEngagePropulsionCommand :> LogicalNavigationCommand;
+        item def LogicalNavigationReport :> NavigationReport;
         item def LogicalLockTarget :> LockTarget;
         item def LogicalShipReport;
         item def LogicalAnalogSignal :> AnalogSignal;
@@ -61,6 +68,10 @@ package LogicalReferenceArchitecture {
             port commandControlGallentePort : LogicalShipCommandPort[0..*];
             port computationNetworkPort : LogicalComputationNetworkPort;
             port powerGridPort : LogicalPowerGridPort;
+            port lowPowerGridPort : LogicalLowPowerGridPort;
+            port lowPowerLinePort : LogicalLowPowerLinePort[0..*];
+            port analogLinePort : AnalogSignal[0..*];
+            port serialPort : LogicalSerialPort[0..*];
         }
         
         //Logical parts ports
@@ -70,8 +81,47 @@ package LogicalReferenceArchitecture {
         }
 
         port def LogicalShipCommandPort {
-            out shipControl : LogicalControlCommand;
-            in shipReport : LogicalShipReport;
+            port droneCommandsSubPort : LogicalDroneCommandsSubPort;
+            port modulesCommandsSubPort : LogicalModuleCommandsSubPort;
+            port navigationCommandsSubPort : LogicalNavigationCommandsSubPort;
+            port scanCommandsSubPort : LogicalScanCommandsSubPort;
+            port targetingCommandsSubPort : LogicalTargetingCommandsSubPort;
+        }
+        port def LogicalDroneCommandsSubPort {
+            out releaseDronesToGrid : LogicalReleaseDronesToGrid;
+            out recallDrones : LogicalRecallDrones;
+            out reconnectDrones : LogicalReconnectDrones;
+            out engageDronesCommand : LogicalEngageDronesCommand;
+            in dronesReport : LogicalDronesReport;
+        }
+        port def LogicalModuleCommandsSubPort {
+            port module1ToggleCommand : LogicalModuleCommandPort;
+            port module2ToggleCommand : LogicalModuleCommandPort;
+            port module3ToggleCommand : LogicalModuleCommandPort;
+            port module4ToggleCommand : LogicalModuleCommandPort;
+            port module5ToggleCommand : LogicalModuleCommandPort;
+            port module6ToggleCommand : LogicalModuleCommandPort;
+            port module7ToggleCommand : LogicalModuleCommandPort;
+            in moduleReport : LogicalModuleReport;
+        }
+        port def LogicalNavigationCommandsSubPort {
+            out executeWarpDriveCommand : LogicalExecuteWarpDriveCommand;
+            out approachSignatureCommand : LogicalApproachSignatureCommand;
+            out orbitSignatureCommand : LogicalOrbitSignatureCommand;
+            out keepSignatureAtRangeCommand : LogicalKeepSignatureAtRangeCommand;
+            out dockToStationCommand : LogicalDockToStationCommand;
+            out engagePropulsionCommand : LogicalEngagePropulsionCommand;
+            in navigationReport : LogicalNavigationReport;
+        }
+
+        port def LogicalScanCommandsSubPort {
+            out directionalScanCommand : LogicalDirectionalScanCommand;
+            in scanReport : LogicalScanReport;
+        }
+
+        port def LogicalTargetingCommandsSubPort {
+            out lockTarget : LockTarget;
+            in targetLockReport : TargetLockReport;
         }
 
         port def LogicalDiagnosticsPort {
@@ -79,7 +129,15 @@ package LogicalReferenceArchitecture {
         }
 
         port def LogicalPowerGridPort {
-            out powerGridEnergy : NaturalEnvironment::Energy;
+            out powerGridEnergy : LogicalPowerSupply;
+        }
+
+        port def LogicalLowPowerGridPort {
+            out lowPowerGridEnergy : LogicalLowPowerSupply;
+        }
+
+        port def LogicalLowPowerLinePort {
+            out lowPowerLineEnergy : LogicalLowPowerSupply;
         }
 
         port def LogicalAnalogPort {
@@ -90,6 +148,15 @@ package LogicalReferenceArchitecture {
 
         port def LogicalAlignmentPort {
             out logicalAlignmentSignal : LogicalAlignmentSignal;
+        }
+
+        port def LogicalSerialPort {
+            out logicalserialSignal : LogicalAnalogSignal;
+        }
+
+        port def LogicalModuleCommandPort {
+            out moduleToggleCommand : ModuleToggleCommand;
+            in moduleReport : ModuleReport;
         }
 
 
@@ -103,10 +170,17 @@ package LogicalReferenceArchitecture {
             end port supplierPort : LogicalComputationNetworkPort;
             end port consumerPort : ~LogicalComputationNetworkPort;
         }
-
-        interface def LogicalPowerGridIF {
+        
+        interface def LogicalPowerGridFlowIF {
             end port supplierPort : LogicalPowerGridPort;
             end port consumerPort : ~LogicalPowerGridPort;
+
+            flow supplierPort.powerGridEnergy to consumerPort.powerGridEnergy;
+        }
+
+        interface def LogicalLowPowerGridIF {
+            end port supplierPort : LogicalLowPowerGridPort;
+            end port consumerPort : ~LogicalLowPowerGridPort;
         }
 
         interface def LogicalDiagnosticsIF {
@@ -122,6 +196,11 @@ package LogicalReferenceArchitecture {
         interface def LogicalAlignmentSignalIF {
             end port supplierPort : LogicalAlignmentPort;
             end port consumerPort : ~LogicalAlignmentPort;
+        }
+
+        interface def LogicalSerialIF {
+            end port supplierPort : LogicalSerialPort;
+            end port consumerPort : ~LogicalSerialPort;
         }
     }
 }
