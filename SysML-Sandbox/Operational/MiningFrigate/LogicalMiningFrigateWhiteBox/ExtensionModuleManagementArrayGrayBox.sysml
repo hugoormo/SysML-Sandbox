@@ -7,20 +7,22 @@ package ExtensionModuleManagementArrayGrayBox {
     private import LogicalReferenceArchitecture::LogicalDefinitions::*;
     private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardItems::*;
 
-    part logicalWhiteBoxMiningFrigateVentureClass :> logicalGrayBoxMiningFrigateVentureClass {
+    part def LogicalWhiteBoxMiningFrigateVentureClass :> LogicalGrayBoxMiningFrigateVentureClass {
 
-        part extensionModulesManagementArray : LogicalPart :>> extensionModulesManagementArray {
+        part extensionModulesManagementArrayGrayBox : LogicalPart :> extensionModulesManagementArray;
+
+        part def ExtensionModulesManagementArrayGrayBox :> LogicalPart {
             doc /*
                 * Initializes and manages the extension modules
                 */
-            port :>> commandNetworkPort;
-            port :>> extensionModule1ControlPort;
-            port :>> extensionModule2ControlPort;
-            port :>> extensionModule3ControlPort;
-            port :>> extensionModule4ControlPort;
-            port :>> extensionModule5ControlPort;
-            port :>> extensionModule6ControlPort;
-            port :>> extensionModule7ControlPort;
+            port commandNetworkPort : ~LogicalShipCommandPort :>> commandControlGallentePort;
+            port extensionModule1ControlPort :>> commandControlGallentePort;
+            port extensionModule2ControlPort :>> commandControlGallentePort;
+            port extensionModule3ControlPort :>> commandControlGallentePort;
+            port extensionModule4ControlPort :>> commandControlGallentePort;
+            port extensionModule5ControlPort :>> commandControlGallentePort;
+            port extensionModule6ControlPort :>> commandControlGallentePort;
+            port extensionModule7ControlPort :>> commandControlGallentePort;
             port extensionModulesLowPowerGridPort :>> lowPowerGridPort;
 
             part arrayController : LogicalPart {
@@ -221,7 +223,7 @@ package ExtensionModuleManagementArrayGrayBox {
                 consumerPort ::> extensionModuleManager7.muxDeMuxProxyPort; 
 
             //behavior of the graybox extensionModulesManagementArray    
-            action :>> logicalInitializeExtensionModulesManagementArray {
+            action logicalInitializeExtensionModulesManagementArray {
                 in commandNetworkProxyPort : ~LogicalShipCommandPort;
                 in module1ControlProxyPort : LogicalModuleCommandPort;
                 in module2ControlProxyPort : LogicalModuleCommandPort;

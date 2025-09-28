@@ -9,8 +9,9 @@ package PodManagerGrayBox {
     private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardItems::*;
     private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardInterfaces::*;
 
-    part logicalWhiteBoxMiningFrigateVentureClass :> logicalGrayBoxMiningFrigateVentureClass {
-        part podManager : LogicalPart :>> podManager {
+    part def LogicalWhiteBoxMiningFrigateVentureClass :> LogicalGrayBoxMiningFrigateVentureClass {
+        
+        part podManagerGrayBox : LogicalPart :> podManager {
             doc /*
                 * Asynchronously receive podCommand items and send asynchronously shipControl items to the bus
                 * Set between the podPort (physical items) and the controlNetwork (logical items).

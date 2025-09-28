@@ -7,9 +7,9 @@ package NavigationManagerGrayBox {
     private import LogicalReferenceArchitecture::LogicalDefinitions::*;
     private import StdPortsAndInterfaces::ImperialTechnology::*;
 
-    part logicalWhiteBoxMiningFrigateVentureClass :> logicalGrayBoxMiningFrigateVentureClass {
+    part def LogicalWhiteBoxMiningFrigateVentureClass :> LogicalGrayBoxMiningFrigateVentureClass {
         
-        part navigationManager : LogicalPart :>> navigationManager {
+        part navigationManagerGrayBox : LogicalPart :> navigationManager {
             doc /*
                 * Executes navigation commands received from the controller
                 */

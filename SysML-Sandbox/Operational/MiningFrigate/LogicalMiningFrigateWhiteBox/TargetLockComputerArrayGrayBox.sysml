@@ -7,9 +7,9 @@ package TargetLockComputerArrayGrayBox {
     private import LogicalReferenceArchitecture::LogicalDefinitions::*;
     private import StdPortsAndInterfaces::ImperialTechnology::*;
 
-    part logicalWhiteBoxMiningFrigateVentureClass :> logicalGrayBoxMiningFrigateVentureClass {
+    part def LogicalWhiteBoxMiningFrigateVentureClass :> LogicalGrayBoxMiningFrigateVentureClass {
 
-        part targetLockComputerArray : LogicalPart :>> targetLockComputerArray{
+        part targetLockComputerArrayGrayBox : LogicalPart :> targetLockComputerArray {
             doc /*
                 * Locks and tracks up to five targets
                 */

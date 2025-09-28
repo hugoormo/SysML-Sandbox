@@ -7,9 +7,9 @@ package DroneControlManagerGrayBox {
     private import LogicalReferenceArchitecture::LogicalDefinitions::*;
     private import StdPortsAndInterfaces::ImperialTechnology::*;
 
-    part logicalwhiteBoxMiningFrigateVentureClass :> logicalGrayBoxMiningFrigateVentureClass {
+    part def LogicalwhiteBoxMiningFrigateVentureClass :> LogicalGrayBoxMiningFrigateVentureClass {
 
-        part droneControlManager : LogicalPart :>> droneControlManager {
+        part droneControlManagerGrayBox : LogicalPart :> droneControlManager {
             port :>> droneControlManagerPort : droneControlPort[2];
             port :>> commandNetworkPort : ~LogicalDroneCommandsSubPort;
             port :>> lowPowerGridPort;

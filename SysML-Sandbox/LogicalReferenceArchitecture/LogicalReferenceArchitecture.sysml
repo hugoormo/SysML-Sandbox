@@ -70,7 +70,7 @@ package LogicalReferenceArchitecture {
             port powerGridPort : LogicalPowerGridPort;
             port lowPowerGridPort : LogicalLowPowerGridPort;
             port lowPowerLinePort : LogicalLowPowerLinePort[0..*];
-            port analogLinePort : AnalogSignal[0..*];
+            port analogLinePort : LogicalAnalogPort[0..*];
             port serialPort : LogicalSerialPort[0..*];
         }
         

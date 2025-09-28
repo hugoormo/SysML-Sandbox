@@ -1,13 +1,13 @@
 package ExtensionModuleManagementArrayWhiteBox {
     
-    private import ExtensionModuleManagementArrayGrayBox::*;
+    private import ExtensionModuleManagementArrayGrayBox::LogicalWhiteBoxMiningFrigateVentureClass::*;
     private import ScalarValues::*;
     private import SI::*;
     private import ParametersOfInterestMetadata::*;
     private import LogicalReferenceArchitecture::LogicalDefinitions::*;
     private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardItems::*;
 
-    part extensionModulesManagementArrayGrayBox :> logicalWhiteBoxMiningFrigateVentureClass.extensionModulesManagementArray {
+    part def ExtensionModulesManagementArrayWhiteBox :> ExtensionModulesManagementArrayGrayBox {
         doc /*
             * Initializes and manages the extension modules
             */
@@ -19,11 +19,10 @@ package ExtensionModuleManagementArrayWhiteBox {
         port extensionModule5ControlPort : LogicalModuleCommandPort :>> extensionModule5ControlPort;
         port extensionModule6ControlPort : LogicalModuleCommandPort :>> extensionModule6ControlPort;
         port extensionModule7ControlPort : LogicalModuleCommandPort :>> extensionModule7ControlPort;
-        port extensionModulesLowPowerGridPort :>> lowPowerGridPort :>> extensionModulesLowPowerGridPort;
+        port extensionModulesLowPowerGridPort :>> extensionModulesLowPowerGridPort;
 
-        connect arrayController.logicalInitializeExtensionModulesManagementArray to extensionModuleManager1.logicalInitializeExtensionModule1;
 
-        part arrayController : LogicalPart {
+        part arrayControllerGrayBox : LogicalPart {
 
             port lowPowerSupplyUnit : ~LogicalLowPowerLinePort :>> lowPowerLinePort;
 
@@ -42,46 +41,18 @@ package ExtensionModuleManagementArrayWhiteBox {
                     then logicalInitializeExtensionModule6;
                     then logicalInitializeExtensionModule7;
 
-                    perform extensionModuleManager1.logicalInitializeExtensionModule1 {
-                        in muxDeMuxPort = extensionModuleManager1.muxDeMuxPort;
-                        in extensionSlotPort = extensionModuleManager1.extensionSlotPort;
-                        
-                    }
-                    perform extensionModuleManager2.logicalInitializeExtensionModule2 {
-                        in muxDeMuxPort = extensionModuleManager2.muxDeMuxPort;
-                        in extensionSlotPort = extensionModuleManager2.extensionSlotPort;
-                        
-                    }
-                    perform extensionModuleManager3.logicalInitializeExtensionModule3 {
-                        in muxDeMuxPort = extensionModuleManager3.muxDeMuxPort;
-                        in extensionSlotPort = extensionModuleManager3.extensionSlotPort;
-                        
-                    }
-                    perform extensionModuleManager4.logicalInitializeExtensionModule4 {
-                        in muxDeMuxPort = extensionModuleManager4.muxDeMuxPort;
-                        in extensionSlotPort = extensionModuleManager4.extensionSlotPort;
-                        
-                    }
-                    perform extensionModuleManager5.logicalInitializeExtensionModule5 {
-                        in muxDeMuxPort = extensionModuleManager5.muxDeMuxPort;
-                        in extensionSlotPort = extensionModuleManager5.extensionSlotPort;
-                        
-                    }
-                    perform extensionModuleManager6.logicalInitializeExtensionModule6 {
-                        in muxDeMuxPort = extensionModuleManager6.muxDeMuxPort;
-                        in extensionSlotPort = extensionModuleManager6.extensionSlotPort;
-                        
-                    }
-                    perform extensionModuleManager7.logicalInitializeExtensionModule7 {
-                        in muxDeMuxPort = extensionModuleManager7.muxDeMuxPort;
-                        in extensionSlotPort = extensionModuleManager7.extensionSlotPort;
-                        
-                    }
+                    perform extensionModuleManager1.logicalInitializeExtensionModule1;
+                    perform extensionModuleManager2.logicalInitializeExtensionModule2;
+                    perform extensionModuleManager3.logicalInitializeExtensionModule3;
+                    perform extensionModuleManager4.logicalInitializeExtensionModule4;
+                    perform extensionModuleManager5.logicalInitializeExtensionModule5;
+                    perform extensionModuleManager6.logicalInitializeExtensionModule6;
+                    perform extensionModuleManager7.logicalInitializeExtensionModule7;
 
             }
         }
 
-        part lowPowerSupplyUnit : LogicalPart {
+        part lowPowerSupplyUnitGrayBox : LogicalPart {
             
             port lowPowerGridPort : ~LogicalLowPowerGridPort :>> lowPowerGridPort;
             port arrayControllerPort :>> lowPowerLinePort;
@@ -97,7 +68,7 @@ package ExtensionModuleManagementArrayWhiteBox {
             action logicalPowerUpextensionModuleManagerArray;
         }
         
-        abstract part extensionModuleManager[7] : LogicalPart {
+        abstract part extensionModuleManagerGrayBox[7] : LogicalPart {
             
             port extensionSlotPort : LogicalModuleCommandPort :>> commandControlGallentePort;
             port muxDeMuxPort : ~LogicalModuleCommandPort :>> commandControlGallentePort;
@@ -140,7 +111,7 @@ package ExtensionModuleManagementArrayWhiteBox {
             }
         }
 
-        part muxDeMux : LogicalPart {
+        part muxDeMuxGrayBox : LogicalPart {
             port commandNetworkPort : ~LogicalShipCommandPort :>> commandControlGallentePort;
             port extensionModule1ControlPort : LogicalModuleCommandPort :>> commandControlGallentePort;
             port extensionModule2ControlPort : LogicalModuleCommandPort :>> commandControlGallentePort;
@@ -222,7 +193,7 @@ package ExtensionModuleManagementArrayWhiteBox {
             }
         }
 
-        part lowPowerWiring : LogicalPart {
+        part lowPowerWiringGrayBox : LogicalPart {
             ref lowPowerSupplyUnit :>> lowPowerSupplyUnit;
             ref arrayController :>> arrayController;
             ref muxDeMux :>> muxDeMux;
@@ -266,122 +237,101 @@ package ExtensionModuleManagementArrayWhiteBox {
             
         }
 
-        part extensionModuleManager1 :> extensionModuleManager {        
-            port :>> extensionSlotPort;
+        part extensionModuleManager1GrayBox :> extensionModuleManagerGrayBox {        
+            port extensionSlotProxyPort :>> extensionSlotPort;
+            port muxDeMuxProxyPort :>> muxDeMuxPort;
 
-            action logicalInitializeExtensionModule1 :>> logicalInitializeExtensionModule;
-
-            interface : LogicalControlIF connect
-                supplierPort ::> extensionModuleManager1.muxDeMuxPort to
-                consumerPort ::> logicalInitializeExtensionModule1.muxDeMuxPort;
-            interface : LogicalControlIF connect
-                supplierPort ::> extensionModuleManager1.extensionSlotPort to
-                consumerPort ::> logicalInitializeExtensionModule1.extensionSlotPort;                 
+            action logicalInitializeExtensionModule1 : LogicalInitializeExtensionModule {
+                in muxDeMuxPort : ~LogicalModuleCommandPort = muxDeMuxProxyPort;
+                in extensionSlotPort : LogicalModuleCommandPort = extensionSlotProxyPort;
+            }                
         }
-        part extensionModuleManager2 :> extensionModuleManager {
-            port :>> extensionSlotPort;
+        part extensionModuleManager2GrayBox :> extensionModuleManagerGrayBox {
+            port extensionSlotProxyPort :>> extensionSlotPort;
+            port muxDeMuxProxyPort :>> muxDeMuxPort;
 
-            action logicalInitializeExtensionModule2 :>> logicalInitializeExtensionModule;
-
-            interface : LogicalControlIF connect
-                supplierPort ::> extensionModuleManager2.muxDeMuxPort to
-                consumerPort ::> logicalInitializeExtensionModule2.muxDeMuxPort;
-            interface : LogicalControlIF connect
-                supplierPort ::> extensionModuleManager2.extensionSlotPort to
-                consumerPort ::> logicalInitializeExtensionModule2.extensionSlotPort;  
+            action logicalInitializeExtensionModule2 : LogicalInitializeExtensionModule {
+                in muxDeMuxPort : ~LogicalModuleCommandPort = muxDeMuxProxyPort;
+                in extensionSlotPort : LogicalModuleCommandPort = extensionSlotProxyPort;
+            } 
         }
-        part extensionModuleManager3 :> extensionModuleManager {
-            port :>> extensionSlotPort;
+        part extensionModuleManager3GrayBox :> extensionModuleManagerGrayBox {
+            port extensionSlotProxyPort :>> extensionSlotPort;
+            port muxDeMuxProxyPort :>> muxDeMuxPort;
             
-            action logicalInitializeExtensionModule3 :>> logicalInitializeExtensionModule;
-
-            interface : LogicalControlIF connect
-                supplierPort ::> extensionModuleManager3.muxDeMuxPort to
-                consumerPort ::> logicalInitializeExtensionModule3.muxDeMuxPort;
-            interface : LogicalControlIF connect
-                supplierPort ::> extensionModuleManager3.extensionSlotPort to
-                consumerPort ::> logicalInitializeExtensionModule3.extensionSlotPort;  
+            action logicalInitializeExtensionModule3 : LogicalInitializeExtensionModule {
+                in muxDeMuxPort : ~LogicalModuleCommandPort = muxDeMuxProxyPort;
+                in extensionSlotPort : LogicalModuleCommandPort = extensionSlotProxyPort;
+            }  
         }
-        part extensionModuleManager4 :> extensionModuleManager {
-            port :>> extensionSlotPort;
+        part extensionModuleManager4GrayBox :> extensionModuleManagerGrayBox {
+            port extensionSlotProxyPort :>> extensionSlotPort;
+            port muxDeMuxProxyPort :>> muxDeMuxPort;
 
-            action logicalInitializeExtensionModule4 :>> logicalInitializeExtensionModule;
-
-            interface : LogicalControlIF connect
-                supplierPort ::> extensionModuleManager4.muxDeMuxPort to
-                consumerPort ::> logicalInitializeExtensionModule4.muxDeMuxPort;
-            interface : LogicalControlIF connect
-                supplierPort ::> extensionModuleManager4.extensionSlotPort to
-                consumerPort ::> logicalInitializeExtensionModule4.extensionSlotPort;  
+            action logicalInitializeExtensionModule4 : LogicalInitializeExtensionModule {
+                in muxDeMuxPort : ~LogicalModuleCommandPort = muxDeMuxProxyPort;
+                in extensionSlotPort : LogicalModuleCommandPort = extensionSlotProxyPort;
+            }  
         }
-        part extensionModuleManager5 :> extensionModuleManager {
-            port :>> extensionSlotPort;
+        part extensionModuleManager5GrayBox :> extensionModuleManagerGrayBox {
+            port extensionSlotProxyPort :>> extensionSlotPort;
+            port muxDeMuxProxyPort :>> muxDeMuxPort;
 
-            action logicalInitializeExtensionModule5 :>> logicalInitializeExtensionModule;
-
-            interface : LogicalControlIF connect
-                supplierPort ::> extensionModuleManager5.muxDeMuxPort to
-                consumerPort ::> logicalInitializeExtensionModule5.muxDeMuxPort;
-            interface : LogicalControlIF connect
-                supplierPort ::> extensionModuleManager5.extensionSlotPort to
-                consumerPort ::> logicalInitializeExtensionModule5.extensionSlotPort;  
+            action logicalInitializeExtensionModule5 : LogicalInitializeExtensionModule {
+                in muxDeMuxPort : ~LogicalModuleCommandPort = muxDeMuxProxyPort;
+                in extensionSlotPort : LogicalModuleCommandPort = extensionSlotProxyPort;
+            }  
         }
-        part extensionModuleManager6 :> extensionModuleManager {
-            port :>> extensionSlotPort;
+        part extensionModuleManager6GrayBox :> extensionModuleManagerGrayBox {
+            port extensionSlotProxyPort :>> extensionSlotPort;
+            port muxDeMuxProxyPort :>> muxDeMuxPort;
 
-            action logicalInitializeExtensionModule6 :>> logicalInitializeExtensionModule;
-
-            interface : LogicalControlIF connect
-                supplierPort ::> extensionModuleManager6.muxDeMuxPort to
-                consumerPort ::> logicalInitializeExtensionModule6.muxDeMuxPort;
-            interface : LogicalControlIF connect
-                supplierPort ::> extensionModuleManager6.extensionSlotPort to
-                consumerPort ::> logicalInitializeExtensionModule6.extensionSlotPort; 
+            action logicalInitializeExtensionModule6 : LogicalInitializeExtensionModule {
+                in muxDeMuxPort : ~LogicalModuleCommandPort = muxDeMuxProxyPort;
+                in extensionSlotPort : LogicalModuleCommandPort = extensionSlotProxyPort;
+            } 
         }
-        part extensionModuleManager7 :> extensionModuleManager {
-            port :>> extensionSlotPort;
+        part extensionModuleManager7GrayBox :> extensionModuleManagerGrayBox {
+            port extensionSlotProxyPort :>> extensionSlotPort;
+            port muxDeMuxProxyPort :>> muxDeMuxPort;
 
-            action logicalInitializeExtensionModule7 :>> logicalInitializeExtensionModule;
-
-            interface : LogicalControlIF connect
-                supplierPort ::> extensionModuleManager7.muxDeMuxPort to
-                consumerPort ::> logicalInitializeExtensionModule7.muxDeMuxPort;
-            interface : LogicalControlIF connect
-                supplierPort ::> extensionModuleManager7.extensionSlotPort to
-                consumerPort ::> logicalInitializeExtensionModule7.extensionSlotPort;  
+            action logicalInitializeExtensionModule7 : LogicalInitializeExtensionModule {
+                in muxDeMuxPort : ~LogicalModuleCommandPort = muxDeMuxProxyPort;
+                in extensionSlotPort : LogicalModuleCommandPort = extensionSlotProxyPort;
+            }  
         }
         
         bind commandNetworkPort = muxDeMux.commandNetworkPort;
-        bind extensionModuleManager1.extensionSlotPort = extensionModule1ControlPort;
-        bind extensionModuleManager2.extensionSlotPort = extensionModule2ControlPort;
-        bind extensionModuleManager3.extensionSlotPort = extensionModule3ControlPort;
-        bind extensionModuleManager4.extensionSlotPort = extensionModule4ControlPort;
-        bind extensionModuleManager5.extensionSlotPort = extensionModule5ControlPort;
-        bind extensionModuleManager6.extensionSlotPort = extensionModule6ControlPort;
-        bind extensionModuleManager7.extensionSlotPort = extensionModule7ControlPort;
+        bind extensionModuleManager1GrayBox.extensionSlotProxyPort = extensionModule1ControlPort;
+        bind extensionModuleManager2GrayBox.extensionSlotProxyPort = extensionModule2ControlPort;
+        bind extensionModuleManager3GrayBox.extensionSlotProxyPort = extensionModule3ControlPort;
+        bind extensionModuleManager4GrayBox.extensionSlotProxyPort = extensionModule4ControlPort;
+        bind extensionModuleManager5GrayBox.extensionSlotProxyPort = extensionModule5ControlPort;
+        bind extensionModuleManager6GrayBox.extensionSlotProxyPort = extensionModule6ControlPort;
+        bind extensionModuleManager7GrayBox.extensionSlotProxyPort = extensionModule7ControlPort;
         bind extensionModulesLowPowerGridPort = lowPowerSupplyUnit.lowPowerGridPort;
 
         interface : LogicalControlIF connect
             supplierPort ::> muxDeMux.extensionModule1ControlPort to
-            consumerPort ::> extensionModuleManager1.muxDeMuxPort; 
+            consumerPort ::> extensionModuleManager1GrayBox.muxDeMuxProxyPort; 
         interface : LogicalControlIF connect
             supplierPort ::> muxDeMux.extensionModule2ControlPort to
-            consumerPort ::> extensionModuleManager2.muxDeMuxPort; 
+            consumerPort ::> extensionModuleManager2GrayBox.muxDeMuxProxyPort; 
         interface : LogicalControlIF connect
             supplierPort ::> muxDeMux.extensionModule3ControlPort to
-            consumerPort ::> extensionModuleManager3.muxDeMuxPort;  
+            consumerPort ::> extensionModuleManager3GrayBox.muxDeMuxProxyPort;  
         interface : LogicalControlIF connect
             supplierPort ::> muxDeMux.extensionModule4ControlPort to
-            consumerPort ::> extensionModuleManager4.muxDeMuxPort; 
+            consumerPort ::> extensionModuleManager4GrayBox.muxDeMuxProxyPort; 
         interface : LogicalControlIF connect
             supplierPort ::> muxDeMux.extensionModule5ControlPort to
-            consumerPort ::> extensionModuleManager5.muxDeMuxPort; 
+            consumerPort ::> extensionModuleManager5GrayBox.muxDeMuxProxyPort; 
         interface : LogicalControlIF connect
             supplierPort ::> muxDeMux.extensionModule6ControlPort to
-            consumerPort ::> extensionModuleManager6.muxDeMuxPort; 
+            consumerPort ::> extensionModuleManager6GrayBox.muxDeMuxProxyPort; 
         interface : LogicalControlIF connect
             supplierPort ::> muxDeMux.extensionModule7ControlPort to
-            consumerPort ::> extensionModuleManager7.muxDeMuxPort; 
+            consumerPort ::> extensionModuleManager7GrayBox.muxDeMuxProxyPort; 
 
     }
     

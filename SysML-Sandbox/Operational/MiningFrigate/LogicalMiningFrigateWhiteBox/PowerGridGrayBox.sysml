@@ -7,8 +7,9 @@ package PowerGridGrayBox {
     private import LogicalReferenceArchitecture::LogicalDefinitions::*;
     private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardItems::*;
 
-    part logicalWhiteBoxMiningFrigateVentureClass :> logicalGrayBoxMiningFrigateVentureClass {
-        part powerGrid : LogicalPart :>> powerGrid {
+    part def LogicalWhiteBoxMiningFrigateVentureClass :> LogicalGrayBoxMiningFrigateVentureClass {
+
+        part powerGridGrayBox : LogicalPart :> powerGrid {
             doc /*
                 * Routes power to the expansion modules.
                 */

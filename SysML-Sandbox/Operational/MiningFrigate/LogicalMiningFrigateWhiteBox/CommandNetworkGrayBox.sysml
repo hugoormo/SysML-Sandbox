@@ -7,8 +7,9 @@ package CommandNetworkGrayBox {
     private import LogicalReferenceArchitecture::LogicalDefinitions::*;
     private import StdPortsAndInterfaces::ImperialTechnology::*;
 
-    part logicalWhiteBoxMiningFrigateVentureClass :> logicalGrayBoxMiningFrigateVentureClass {
-        part commandNetwork : LogicalPart :>> commandNetwork{
+    part def LogicalWhiteBoxMiningFrigateVentureClass :> LogicalGrayBoxMiningFrigateVentureClass {
+        
+        part commandNetworkGrayBox : LogicalPart :> commandNetwork {
             doc /*
                 * Routes all shipCommand and report items between the ship parts.  
                 */

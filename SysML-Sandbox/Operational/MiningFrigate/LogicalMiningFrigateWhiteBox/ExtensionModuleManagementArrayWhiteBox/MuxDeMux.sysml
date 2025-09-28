@@ -1,15 +1,15 @@
 package MuxDeMuxGrayBox {
     
-    private import ExtensionModuleManagementArrayWhiteBox::*;
+    private import ExtensionModuleManagementArrayGrayBox::LogicalWhiteBoxMiningFrigateVentureClass::*;
     private import ScalarValues::*;
     private import SI::*;
     private import ParametersOfInterestMetadata::*;
     private import LogicalReferenceArchitecture::LogicalDefinitions::*;
     private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardItems::*;
 
-    part extensionModulesManagementArray : LogicalPart :> extensionModulesManagementArray {
+    part def ExtensionModulesManagementArrayWhiteBox :> ExtensionModulesManagementArrayGrayBox {
 
-        part muxDeMux : LogicalPart :> extensionModulesManagementArrayGrayBox.muxDeMux {
+        part muxDeMuxGrayBox :> muxDeMux {
                 port :>> commandNetworkPort : ~LogicalShipCommandPort;
                 port :>> extensionModule1ControlPort : LogicalModuleCommandPort;
                 port :>> extensionModule2ControlPort : LogicalModuleCommandPort;

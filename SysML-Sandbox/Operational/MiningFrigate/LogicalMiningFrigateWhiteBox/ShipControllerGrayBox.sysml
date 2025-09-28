@@ -7,9 +7,9 @@ package ShipControllerGrayBox {
     private import LogicalReferenceArchitecture::LogicalDefinitions::*;
     private import StdPortsAndInterfaces::ImperialTechnology::ImperialStandardItems::*;
 
-    part logicalWhiteBoxMiningFrigateVentureClass :> logicalGrayBoxMiningFrigateVentureClass {
+    part def LogicalWhiteBoxMiningFrigateVentureClass :> LogicalGrayBoxMiningFrigateVentureClass {
         
-        part shipController : LogicalPart :>> shipController {
+        part shipControllerGrayBox : LogicalPart :> shipController {
             doc /*
                 * Central controller of the ship that executes the state machine and
                 * controls the parts of the ship.
