@@ -10,6 +10,8 @@ package ScannersGrayBox {
     part def LogicalWhiteBoxMiningFrigateVentureClass :> LogicalGrayBoxMiningFrigateVentureClass {
 
         part longRangeDirectionalSensorGrayBox : LogicalPart :> longRangeDirectionalSensor {
+            attribute gravimetricDirectionalSensorStrength :>> gravimetricDirectionalSensorStrength default 4;
+            
             port :>> longRangeDirectionalSensorPort;
             port commandNetworkPort : ~LogicalShipCommandPort :>> commandNetworkPort;
             port powerGridLowPowerGridPort :>> lowPowerGridPort; 
@@ -24,6 +26,8 @@ package ScannersGrayBox {
             }
 
             part directionalScanner : LogicalPart {
+                attribute gravimetricDirectionalSensorStrength :>> gravimetricDirectionalSensorStrength default 4;
+
                 port :>> longRangeDirectionalSensorPort;
                 port scannerControlsPort : ~LogicalAnalogPort :>> analogLinePort;
                 port scannerReportPort : LogicalAnalogPort :>> analogLinePort;
@@ -104,8 +108,10 @@ package ScannersGrayBox {
                 }
             }
         }
-        part gridSensorGrayBox : LogicalPart :> gridSensor {
-            port :>> gridSensorPort;
+        part gridSensorGrayBox : LogicalPart :> gridOmnidirectionalSensor {
+            attribute gravimetricOmnidirectionalSensorStrength :>> gravimetricOmnidirectionalSensorStrength default 4;
+
+            port :>> gridOmnidirectionalSensorPort;
             port commandNetworkPort : ~LogicalShipCommandPort :>> commandNetworkPort;
 
             part lowPowerSupplyUnit : LogicalPart {
@@ -114,6 +120,19 @@ package ScannersGrayBox {
                 port powerGridNetworkPort :>> lowPowerLinePort;
                 
                 perform logicalInitializeGridScanServices.logicalPowerUpGridSensorSystem;
+            }
+
+            part omniDirectionalScanner : LogicalPart {
+                attribute gravimetricOmnidirectionalSensorStrength :>> gravimetricSensorStrength default 4;
+
+                port :>> gridOmnidirectionalSensorPort;
+                port commandNetworkPort : ~LogicalShipCommandPort :>> commandNetworkPort;
+                port scannerReportPort : LogicalAnalogPort :>> analogLinePort;
+                port lowPowerSupplyUnitPort : ~LogicalLowPowerLinePort :>> lowPowerLinePort;
+
+                perform logicalInitializeGridScanServices.logicalScanGrid {
+                    in scanSpaceServicesCommandPort : LogicalShipCommandPort = commandNetworkPort;
+                }
             }
 
             action :>> logicalInitializeGridScanServices {
@@ -125,6 +144,8 @@ package ScannersGrayBox {
                 first start;
                 then action logicalPowerUpGridSensorSystem;
                 then action logicalScanGrid {
+                    in scanSpaceServicesCommandPort : LogicalShipCommandPort;
+                    
                     accept after 1[s];
                     then action logicalCycleScanner {out scanReport : LogicalShipReport;}
                     then send logicalCycleScanner.scanReport via scanSpaceServicesCommandPort;

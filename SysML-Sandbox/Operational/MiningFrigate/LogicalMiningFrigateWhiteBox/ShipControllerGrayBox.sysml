@@ -89,7 +89,7 @@ package ShipControllerGrayBox {
             then perform podManager.logicalInitializePodManagerServices;
             then perform commandNetwork.logicalInitializeCommandNetwork;
             then perform longRangeDirectionalSensor.logicalInitializeLongRangeScanServices;
-            then perform gridSensor.logicalInitializeGridScanServices;
+            then perform gridOmnidirectionalSensor.logicalInitializeGridScanServices;
             then perform navigationManager.logicalInitializeNavigationServices;
             then perform targetLockComputerArray.initializeTargetingComputers;
             then perform shipProcessor.logicalInitializeShipProcessor;

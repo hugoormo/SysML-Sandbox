@@ -35,7 +35,6 @@ package LogicalGrayBoxMiningFrigate {
         attribute warpBubbleEnd : CelestialSignature :>> warpBubbleEnd;  
         attribute oreHoldCapacity :>> oreHoldCapacity : Real default 5000.0;
         attribute droneCapacity :>> droneCapacity : Real default 10;
-        attribute oreHoldStatus :>> oreHoldStatus : Real default 2;
         attribute maxLockedTargets :>> maxLockedTargets default 5; 
         attribute gravimetricSensorStrength :>> gravimetricSensorStrength default 4;
         #mop attribute yieldBonus :>> yieldBonus;
@@ -158,6 +157,8 @@ package LogicalGrayBoxMiningFrigate {
 
         }
         part longRangeDirectionalSensor : LogicalPart {
+            attribute gravimetricDirectionalSensorStrength :>> gravimetricSensorStrength default 4;
+
             port longRangeDirectionalSensorPort :> longRangeGravimetricDirectionalSensorPort;
             port commandNetworkPort : ~LogicalShipCommandPort :>> commandControlGallentePort;
 
@@ -165,8 +166,10 @@ package LogicalGrayBoxMiningFrigate {
                 in scanSpaceServicesCommandPort : LogicalShipCommandPort = commandNetworkPort;
             }
         }
-        part gridSensor : LogicalPart {
-            port gridSensorPort :> gridGravimetricSensorPort;
+        part gridOmnidirectionalSensor : LogicalPart {
+            attribute gravimetricOmnidirectionalSensorStrength :>> gravimetricSensorStrength default 4;
+
+            port gridOmnidirectionalSensorPort :> gridGravimetricSensorPort;
             port commandNetworkPort : ~LogicalShipCommandPort :>> commandControlGallentePort;
 
             perform logicalStartUpSequence.logicalInitializeGridScanServices {
@@ -175,8 +178,17 @@ package LogicalGrayBoxMiningFrigate {
         }
             
         part mainPropulsor : LogicalPart {
+            attribute maxImpulse;
+
             port mainPropulsionNozzle :> xPropulsionPort [4];
             port navigationManagerAnalog : ~LogicalAnalogPort;
+
+            constraint def {
+                doc /*
+                    * relate maxVelocity of ship with maxImpulse from propulsor
+                    * attribute maxVelocity :>> maxVelocity default 335.0;
+                    */
+            }
         }
         part yAxisRotator : LogicalPart {
             port directionalPropulsorNozzle :> yPropulsionPort[2];
@@ -188,6 +200,9 @@ package LogicalGrayBoxMiningFrigate {
         }
 
         part warpGenerator : LogicalPart {
+            attribute warpCoreStrength :>> warpCoreStrength default 2;
+            attribute warpSpeed :>> warpSpeed default 5.0;
+
             port warpShieldPort :> LogicalGrayBoxMiningFrigateVentureClass::warpShieldPort; //Naming disambiguation
 
             perform warpToBubbleEnd {
@@ -195,15 +210,27 @@ package LogicalGrayBoxMiningFrigate {
             } 
         }
         part shieldGenerator : LogicalPart {
+            attribute generatorShieldStrength;
+
             port shieldProjectorPort :> shieldMitigationPort;
             port powerGridPort : ~LogicalPowerGridPort  :>> powerGridPort;
+
+            constraint def {
+                doc /*
+                    * relate shieldStrength of ship with generatorShieldStrength from shieldGenerator
+                    * attribute shieldStrength :>> shieldStrength : Real default 225.0;
+                    */
+            }
         }
-        part armourManager : LogicalPart {
+        part armour : LogicalPart {
+            attribute armorStrength :>> armorStrength : Real default 175.0;
+
             port armourPlatePort :> armourMitigationPort;
         }
-        part structureManager : LogicalPart {
-
+        part structure : LogicalPart {
+            attribute structureStrength :>> structureStrength : Real default 200.0;
             attribute tractorBeamOn : Boolean;
+
             port beamTractorPort :> tractorBeamPort;
             port structureEnclosurePort :> structureMitigationPort;
         }
@@ -223,15 +250,15 @@ package LogicalGrayBoxMiningFrigate {
         bind dockingManager.dockingManagerPort = dockingPort;
         bind droneControlManager.droneControlManagerPort = droneControlPort;
         bind longRangeDirectionalSensor.longRangeDirectionalSensorPort = longRangeGravimetricDirectionalSensorPort;
-        bind gridSensor.gridSensorPort = gridGravimetricSensorPort;
+        bind gridOmnidirectionalSensor.gridOmnidirectionalSensorPort = gridGravimetricSensorPort;
         bind mainPropulsor.mainPropulsionNozzle = zPropulsionPort;
         bind zAxisRotator.directionalPropulsorNozzle = xPropulsionPort;
         bind yAxisRotator.directionalPropulsorNozzle = yPropulsionPort;
         bind warpGenerator.warpShieldPort = warpShieldPort;
         bind shieldGenerator.shieldProjectorPort = shieldMitigationPort;
-        bind armourManager.armourPlatePort = armourMitigationPort;
-        bind structureManager.structureEnclosurePort = structureMitigationPort;
-        bind structureManager.beamTractorPort = tractorBeamPort;
+        bind armour.armourPlatePort = armourMitigationPort;
+        bind structure.structureEnclosurePort = structureMitigationPort;
+        bind structure.beamTractorPort = tractorBeamPort;
 
         
         //Logical application parts
@@ -249,12 +276,15 @@ package LogicalGrayBoxMiningFrigate {
 
         }
         part shipProcessor : LogicalPart {
+            attribute suppliedCpu :>> suppliedCpu default 240;
             port computationNetwork : LogicalComputationNetworkPort :>> computationNetworkPort;
 
             perform logicalStartUpSequence.logicalInitializeShipProcessor;
         }
         
-        part miningYieldEnhancer : LogicalPart;
+        part miningYieldEnhancer : LogicalPart {
+            #mop attribute yieldBonus :>> yieldBonus;
+        }
 
         part powerGenerator : LogicalPart {
             port powerSourceGeneratorPort : LogicalPowerGridPort :>> powerGridPort;
@@ -269,6 +299,8 @@ package LogicalGrayBoxMiningFrigate {
                 * Stores energy from the generator and stabilizes power supply in the powerGrid
                 * Monitors the energy storage and regulates the generator
                 */
+            attribute suppliedCapacitor :>> suppliedCapacitor default 250.0;
+
             attribute maxStoredPower = suppliedCapacitor;
             port powerGridSupplyPort :>> powerGridPort;
             port powerGridPort : ~LogicalPowerGridPort  :>> powerGridPort;
@@ -288,12 +320,21 @@ package LogicalGrayBoxMiningFrigate {
             doc /*
                 * Stores Ore in transport containers (cans)
                 */
+            attribute oreHoldCapacity :>> oreHoldCapacity : Real default 5000.0;
+        }
+
+        part cargoHold : LogicalPart{
+            doc /*
+                * Stores cargo in transport containers
+                */
+            attribute cargoHoldCapacity :>> cargoHoldCapacity : Real default 50;
         }
 
         part targetLockComputerArray : LogicalPart {
             doc /*
                 * Locks and tracks up to five targets
                 */
+            attribute maxLockedTargets :>> maxLockedTargets default 5;
 
             port commandNetworkPort : ~LogicalShipCommandPort :>> commandControlGallentePort; 
             port highPowerTurretSlot1TargetingPort : LogicalAlignmentPort;
@@ -339,6 +380,8 @@ package LogicalGrayBoxMiningFrigate {
             doc /*
                 * Executes navigation commands received from the controller
                 */
+            attribute alignTime :>> alignTime default 5.99;
+
             port commandNetworkPort : ~LogicalShipCommandPort :>> commandControlGallentePort;
             port mainPropulsorAnalogPort : LogicalAnalogPort;
             port zdirectionalPropulsorAnalogPort : LogicalAnalogPort;
@@ -357,6 +400,7 @@ package LogicalGrayBoxMiningFrigate {
         }
 
         part droneStore : LogicalPart;
+            attribute droneStoreCapacity :>> droneCapacity : Real default 10;
 
         //connectivity of logical application parts with logical interfacing parts
         interface : LogicalControlIF connect
@@ -417,7 +461,8 @@ package LogicalGrayBoxMiningFrigate {
             doc /*
                 * Routes power to the expansion modules.
                 */
-            
+            attribute suppliedPowerGrid :>> suppliedPowerGrid default 45;
+
             port energyStoreSupplyPort : ~LogicalPowerGridPort :>> powerGridPort;
             port energyStoreFlowbackPort :>> powerGridPort;
             port highPowerSlotCoupling1GridPort :>> powerGridPort;

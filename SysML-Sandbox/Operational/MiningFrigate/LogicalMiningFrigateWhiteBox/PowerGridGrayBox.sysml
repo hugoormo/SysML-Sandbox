@@ -13,7 +13,8 @@ package PowerGridGrayBox {
             doc /*
                 * Routes power to the expansion modules.
                 */
-            
+            attribute suppliedPowerGrid :>> suppliedPowerGrid default 45;
+
             port energyStoreSupplyPort : ~LogicalPowerGridPort :>> energyStoreSupplyPort;
             port energyStoreFlowbackPort :>> energyStoreFlowbackPort;
             port highPowerSlotCoupling1GridPort :>> highPowerSlotCoupling1GridPort;
@@ -34,6 +35,8 @@ package PowerGridGrayBox {
             }
 
             part powerGridNetwork : LogicalPart {
+                attribute suppliedPowerGrid :>> suppliedPowerGrid default 45;
+                
                 port energyStoreSupplyPort : ~LogicalPowerGridPort :>> energyStoreSupplyPort;
                 port energyStoreFlowbackPort :>> energyStoreFlowbackPort;
                 port highPowerSlotCoupling1GridPort :>> highPowerSlotCoupling1GridPort;
