@@ -24,7 +24,7 @@ The model has been generated with the support of an LLM following a series of qu
 ## Recusrive aproach
 The Frigate is defined following a recursive approach that uses Blackbox, Graybox, and Whitebox concepts to decompose the system structurally and functionally.
 
-# Further work: here is where you my like to contribute
+# Further work: here is where you may like to contribute
 ...for instance with a transport ship.
  
 ## Initiated by
