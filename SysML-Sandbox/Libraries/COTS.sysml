@@ -11,6 +11,10 @@
             in moduleCommand : ModuleToggleCommand;
             out moduleReport : ModuleReport;
         }
+        action imperialStandardModuleOverheat {
+            out performanceRating : Real;
+            out damageReport : ModuleReport;
+        }
     }
  
     //COTS Modules Definitions 
@@ -69,6 +73,7 @@
     part def Afterburner :> ImperialStandardModule {
         doc /* Improves sublight speed by increasing thrust. */
         attribute velocityBonus : Real = 112.5;
+        attribute overheatVelocityBonus : Real = 185.0;
         attribute activationCost : Real = 20.0;
         attribute cycleTime : Real = 10.0;
         attribute moduleMass redefines mass = 1000.0; // Mass in kg
@@ -79,6 +84,10 @@
         action boostSpeed :>> imperialStandardModuleAction {
             in :>> moduleCommand = lowSlot.moduleControl;
             out :>> moduleReport = lowSlot.moduleReport;
+        }
+        action overheat :>> imperialStandardModuleOverheat {
+            out :>> performanceRating;
+            out :>> damageReport;
         }
     }
 

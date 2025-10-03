@@ -33,7 +33,7 @@ package CommandNetworkGrayBox {
             part controlRelay : LogicalPart {
                 port lowPowerSupplyUnitPort : ~LogicalLowPowerLinePort :>> lowPowerLinePort; 
                 port podManagerPort : ~LogicalShipCommandPort;
-                port shipControllerPort : LogicalShipCommandPort;
+                port shipControllerCommandsPort : LogicalShipCommandPort;
                 port longRangeDirectionalSensorCommandPort : LogicalScanCommandsSubPort;
                 port navigationManagerCommandPort : LogicalNavigationCommandsSubPort;
                 port extensionModulesManagementArrayPort : LogicalModuleCommandsSubPort;
@@ -41,13 +41,13 @@ package CommandNetworkGrayBox {
                 port targetLockComputerArrayPort : LogicalTargetingCommandsSubPort;
 
                     perform logicalInitializeCommandNetwork.relayControl {
-                        in podControlCommandPort : ~LogicalShipCommandPort = podManagerPort; 
-                        in relayShipControllerCommandsPort : LogicalShipCommandPort = shipControllerPort;
-                        in relaySensorCommandsPort : LogicalScanCommandsSubPort = longRangeDirectionalSensorCommandPort;
-                        in relayNavCommandsPort : LogicalNavigationCommandsSubPort = navigationManagerCommandPort;  
-                        in relayModuleCommandsPort : LogicalModuleCommandsSubPort = extensionModulesManagementArrayPort;
-                        in relayDronesCommandsPort : LogicalDroneCommandsSubPort = droneManagerCommandPort;
-                        in relayTargetLockCommandsPort: LogicalTargetingCommandsSubPort = targetLockComputerArrayPort;
+                        in relayControl_podManagerPort : ~LogicalShipCommandPort = podManagerPort; 
+                        in relayControl_ShipControllerCommandsPort : LogicalShipCommandPort = shipControllerCommandsPort;
+                        in relayControl_longRangeDirectionalSensorCommandPort : LogicalScanCommandsSubPort = longRangeDirectionalSensorCommandPort;
+                        in relayControl_navigationManagerCommandPort : LogicalNavigationCommandsSubPort = navigationManagerCommandPort;  
+                        in relayControl_extensionModulesManagementArrayPort : LogicalModuleCommandsSubPort = extensionModulesManagementArrayPort;
+                        in relayControl_droneManagerCommandPort : LogicalDroneCommandsSubPort = droneManagerCommandPort;
+                        in relayControl_targetLockComputerArrayPort: LogicalTargetingCommandsSubPort = targetLockComputerArrayPort;
                     }
             }
             
@@ -62,7 +62,7 @@ package CommandNetworkGrayBox {
             }
 
             bind podManagerPort = controlRelay.podManagerPort;
-            bind shipControllerPort = controlRelay.shipControllerPort;
+            bind shipControllerPort = controlRelay.shipControllerCommandsPort;
             bind longRangeDirectionalSensorCommandPort = controlRelay.longRangeDirectionalSensorCommandPort;
             bind navigationManagerCommandPort = controlRelay.navigationManagerCommandPort;
             bind extensionModulesManagementArrayPort = controlRelay.extensionModulesManagementArrayPort;
@@ -75,12 +75,13 @@ package CommandNetworkGrayBox {
                     * Start services of the control network. 
                     */
 
-                in podManagerProxyPort : ~LogicalShipCommandPort :>> podManagerProxyPort;
-                in longRangeDirectionalSensorCommandProxyPort : LogicalShipCommandPort :>> longRangeDirectionalSensorCommandProxyPort;
-                in navigationManagerCommandProxyPort  : LogicalShipCommandPort :>> navigationManagerCommandProxyPort;
-                in extensionModulesManagementArrayProxyPort : LogicalShipCommandPort :>> extensionModulesManagementArrayProxyPort;
-                in droneManagerCommandProxyPort : LogicalShipCommandPort :>> droneManagerCommandProxyPort;
-                in targetLockComputerArrayProxyPort: LogicalShipCommandPort :>> targetLockComputerArrayProxyPort;
+                in podManagerPort : ~LogicalShipCommandPort :>> podManagerPort;
+                in ShipControllerCommandsPort : LogicalShipCommandPort; 
+                in longRangeDirectionalSensorCommandPort : LogicalShipCommandPort :>> longRangeDirectionalSensorCommandPort;
+                in navigationManagerCommandPort  : LogicalShipCommandPort :>> navigationManagerCommandProxyPort;
+                in extensionModulesManagementArrayPort : LogicalShipCommandPort :>> extensionModulesManagementArrayPort;
+                in droneManagerCommandPort : LogicalShipCommandPort :>> droneManagerCommandPort;
+                in targetLockComputerArrayPort: LogicalShipCommandPort :>> targetLockComputerArrayPort;
                 
                 first start;
                 then action logicalPowerUpcommandNetwork;
@@ -88,14 +89,7 @@ package CommandNetworkGrayBox {
                     doc/*
                         * Relay signals received from the podManager to all parts in the control network
                         * Relay back reports from the ship to the podManager
-                        */
-                    in podControlCommandPort : ~LogicalShipCommandPort;
-                    in relayShipControllerCommandsPort : LogicalShipCommandPort; 
-                    in relaySensorCommandsPort : LogicalScanCommandsSubPort;
-                    in relayNavCommandsPort : LogicalNavigationCommandsSubPort;  
-                    in relayModuleCommandsPort : LogicalModuleCommandsSubPort;
-                    in relayDronesCommandsPort : LogicalDroneCommandsSubPort;
-                    in relayTargetLockCommandsPort: LogicalTargetingCommandsSubPort;      
+                        */     
                 }   
             }
         }

@@ -28,8 +28,8 @@ package DroneControlManagerGrayBox {
                 port lowPowerSupplyUnitPort : ~LogicalLowPowerLinePort :>> lowPowerLinePort;
 
                 perform logicalInitializeDroneServices.relayDronescommands {
-                    in commandNetworkProxyPort : ~LogicalDroneCommandsSubPort = commandNetworkPort;
-                    in droneControlManagerProxyPort : droneControlPort[2] = droneControlManagerPort;
+                    in relayDronescommands_droneControlManagerProxyPort : droneControlPort[2] = droneControlManagerPort;
+                    in relayDronescommands_commandNetworkProxyPort : ~LogicalDroneCommandsSubPort = commandNetworkPort;
                 }
             }
 
@@ -51,14 +51,12 @@ package DroneControlManagerGrayBox {
                 doc /*
                     * Power up and enable drone services through calls to the dronesManager (perform action manageDrones...).
                     */
-                in :>> dronesControlManagerCommandPort;
-
+                in droneControlManagerPort : droneControlPort[2];
+                in commandNetworkPort : ~LogicalDroneCommandsSubPort;
+                
                 first start;
                 then action logicalPowerUpDronesControlManager;
-                then action relayDronescommands {
-                    in commandNetworkPort : ~LogicalDroneCommandsSubPort;
-                    in droneControlManagerPort : droneControlPort[2];
-                }
+                then action relayDronescommands;
             }
 
         }

@@ -178,23 +178,44 @@ package LogicalGrayBoxMiningFrigate {
         }
             
         part mainPropulsor : LogicalPart {
-            attribute maxImpulse;
+            attribute maxImpulse :Real;
 
             port mainPropulsionNozzle :> xPropulsionPort [4];
             port navigationManagerAnalog : ~LogicalAnalogPort;
 
-            constraint def {
+            assert constraint impulse2ManeuverabilityConstraint {
+                in propulsorImpulse = maxImpulse;
+                in yrotatorImpulse = yAxisRotator.maxImpulse;
+                in zrotatorImpulse = zAxisRotator.maxImpulse;
+                in shipSpeed = maxVelocity;
+                in structureStrength = structure.structureStrength;
+            }
+
+            //The constraint definition my be relocated to a libray of constraints
+            //and be reused in different contexts.
+            constraint def Impulse2ManeuverabilityConstraint {
                 doc /*
                     * relate maxVelocity of ship with maxImpulse from propulsor
                     * attribute maxVelocity :>> maxVelocity default 335.0;
                     */
+                in propulsorImpulse : Real;
+                in yrotatorImpulse :Real;
+                in zrotatorImpulse :Real;
+                in shipSpeed : Real;
+                in structureStrength : Real;
+
+                //expression -> f(yrotatorImpulse, zrotatorImpulse, shipSpeed, structureStrength) => propulsorImpulse;
             }
         }
         part yAxisRotator : LogicalPart {
+            attribute maxImpulse :Real;
+
             port directionalPropulsorNozzle :> yPropulsionPort[2];
             port navigationManagerAnalog : ~LogicalAnalogPort;
         }
         part zAxisRotator : LogicalPart {
+            attribute maxImpulse :Real;
+            
             port directionalPropulsorNozzle :> zPropulsionPort[2];
             port navigationManagerAnalog : ~LogicalAnalogPort;
         }
@@ -215,11 +236,20 @@ package LogicalGrayBoxMiningFrigate {
             port shieldProjectorPort :> shieldMitigationPort;
             port powerGridPort : ~LogicalPowerGridPort  :>> powerGridPort;
 
-            constraint def {
+            assert constraint shieldStrenght2ShieldGenerator {
+                in generatorShieldStrength = generatorShieldStrength;
+                in shipShieldStrength = shieldStrength;
+            }
+            
+            constraint def ShieldStrenght2ShieldGenerator{
                 doc /*
                     * relate shieldStrength of ship with generatorShieldStrength from shieldGenerator
                     * attribute shieldStrength :>> shieldStrength : Real default 225.0;
                     */
+                in generatorShieldStrength : Real;
+                in shipShieldStrength : Real;
+
+                //expression -> f(shipShieldStrength) => generatorShieldStrength;
             }
         }
         part armour : LogicalPart {
@@ -382,6 +412,28 @@ package LogicalGrayBoxMiningFrigate {
                 */
             attribute alignTime :>> alignTime default 5.99;
 
+            assert constraint maneuverability2AlignmentConstraint {
+                in maxAlignTime = alignTime;
+                in mass = massShip;
+                in yrotatorImpulse = yAxisRotator.maxImpulse;
+                in zrotatorImpulse = zAxisRotator.maxImpulse;
+                in shipSpeed = maxVelocity;
+            }
+
+            constraint def Maneuverability2AlignmentConstraint {
+                doc /*
+                    * relate maxVelocity of ship with maxImpulse from propulsor
+                    * attribute maxVelocity :>> maxVelocity default 335.0;
+                    */
+                in maxAlignTime : Real;
+                in mass : Real;
+                in yrotatorImpulse :Real;
+                in zrotatorImpulse :Real;
+                in shipSpeed : Real;
+
+                //expression -> f(yrotatorImpulse, zrotatorImpulse, shipSpeed, mass) => alignTime;
+            }
+
             port commandNetworkPort : ~LogicalShipCommandPort :>> commandControlGallentePort;
             port mainPropulsorAnalogPort : LogicalAnalogPort;
             port zdirectionalPropulsorAnalogPort : LogicalAnalogPort;
@@ -475,6 +527,7 @@ package LogicalGrayBoxMiningFrigate {
 
             perform logicalStartUpSequence.logicalInitializePowerGrid {
                 in energyIn : LogicalPowerSupply = energyStoreSupplyPort.powerGridEnergy;
+                in shieldGeneratorGridProxyPort : LogicalPowerGridPort = shieldGeneratorGridPort;
                 out energyFlowback : LogicalPowerSupply = energyStoreFlowbackPort.powerGridEnergy;
                 out highPowerSlotCoupling1Energy : LogicalPowerSupply = highPowerSlotCoupling1GridPort.powerGridEnergy;
                 out highPowerSlotCoupling2Energy : LogicalPowerSupply = highPowerSlotCoupling2GridPort.powerGridEnergy;
@@ -482,7 +535,6 @@ package LogicalGrayBoxMiningFrigate {
                 out midPowerSlotCoupling1Energy : LogicalPowerSupply = midPowerSlotCoupling1GridPort.powerGridEnergy;
                 out midPowerSlotCoupling2Energy : LogicalPowerSupply = midPowerSlotCoupling2GridPort.powerGridEnergy;
                 out midPowerSlotCoupling3Energy : LogicalPowerSupply = midPowerSlotCoupling3GridPort.powerGridEnergy;
-                out shieldGeneratorGridPort : LogicalPowerSupply = shieldGeneratorGridPort;
             }   
         }
         part commandNetwork : LogicalPart {
@@ -731,6 +783,7 @@ package LogicalGrayBoxMiningFrigate {
                 */
             
             in energyIn : LogicalPowerSupply;
+            in shieldGeneratorGridPort : LogicalPowerGridPort;
             out energyFlowback : LogicalPowerSupply;
             out highPowerSlotCoupling1Energy : LogicalPowerSupply;
             out highPowerSlotCoupling2Energy : LogicalPowerSupply;
@@ -738,8 +791,6 @@ package LogicalGrayBoxMiningFrigate {
             out midPowerSlotCoupling1Energy : LogicalPowerSupply;
             out midPowerSlotCoupling2Energy : LogicalPowerSupply;
             out midPowerSlotCoupling3Energy : LogicalPowerSupply;
-            out shieldGeneratorGridPort : LogicalPowerSupply;
-            
         }
         then action logicalInitializeEnergyStore {
             doc /*
@@ -891,4 +942,4 @@ package LogicalGrayBoxMiningFrigate {
         in bubbleEnd : CelestialSignature;
     } 
     
-}    
+}     

@@ -30,7 +30,7 @@ package ScannersGrayBox {
 
                 port :>> longRangeDirectionalSensorPort;
                 port scannerControlsPort : ~LogicalAnalogPort :>> analogLinePort;
-                port scannerReportPort : LogicalAnalogPort :>> analogLinePort;
+                port scannerReadingsPort : LogicalAnalogPort :>> analogLinePort;
                 port lowPowerSupplyUnitPort : ~LogicalLowPowerLinePort :>> lowPowerLinePort;
                 
                 perform logicalInitializeLongRangeScanServices.logicalDirectionalScan.logicalDirectionalScanSpace {
@@ -38,7 +38,7 @@ package ScannersGrayBox {
                     in range = scannerControlsPort.logicalAnalogSignal1;
                     in direction = scannerControlsPort.logicalAnalogSignal2;
                     in coneAngle = scannerControlsPort.logicalAnalogSignal2;
-                    out sensorReading : LogicalAnalogSignal = scannerReportPort.logicalAnalogSignal1;
+                    out sensorReading : LogicalAnalogSignal = scannerReadingsPort.logicalAnalogSignal1;
                 }
             }
 
@@ -46,7 +46,7 @@ package ScannersGrayBox {
                 port lowPowerSupplyUnitPort :>> lowPowerLinePort;
                 port commandNetworkProxyPort : ~LogicalShipCommandPort :>> commandNetworkPort;
                 port scannerControlsPort : LogicalAnalogPort :>> analogLinePort;
-                port scannerReportPort : ~LogicalAnalogPort :>> analogLinePort;
+                port scannerReadingsPort : ~LogicalAnalogPort :>> analogLinePort;
 
                 perform logicalInitializeLongRangeScanServices.logicalDirectionalScan {
                     in scanSpaceServicesCommandProxyPort : LogicalShipCommandPort = commandNetworkProxyPort;
@@ -75,8 +75,8 @@ package ScannersGrayBox {
                 supplierPort ::> directionalScannerManager.scannerControlsPort to
                 consumerPort ::> directionalScanner.scannerControlsPort;
             interface : LogicalAnalogSignalIF connect
-                supplierPort ::> directionalScanner.scannerReportPort to
-                consumerPort ::> directionalScannerManager.scannerReportPort;
+                supplierPort ::> directionalScanner.scannerReadingsPort to
+                consumerPort ::> directionalScannerManager.scannerReadingsPort;
 
             action :>> logicalInitializeLongRangeScanServices {
                 doc /*

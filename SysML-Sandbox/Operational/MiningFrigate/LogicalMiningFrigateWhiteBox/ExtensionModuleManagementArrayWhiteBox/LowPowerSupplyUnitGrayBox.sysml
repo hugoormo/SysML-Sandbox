@@ -22,7 +22,7 @@ package LowPowerSupplyUnitGrayBox {
                 port :>> extensionModuleManager6Port;
                 port :>> extensionModuleManager7Port;
                 
-                action :>> logicalPowerUpextensionModuleManagerArray;
+                perform action :>> logicalPowerUpextensionModuleManagerArray;
         }
     }
 }

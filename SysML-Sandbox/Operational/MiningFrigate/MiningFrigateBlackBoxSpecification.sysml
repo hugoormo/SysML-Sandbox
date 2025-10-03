@@ -18,6 +18,8 @@
         */
         private import PilotPodsAndSpaceships::*;
 
+        part miningFrigateVentureClass : MiningFrigateVentureClass;
+
         part def MiningFrigateVentureClass :> ImperialStandardShip {
 
             //Manufacturer and identification
@@ -82,6 +84,7 @@
 
             //Exhibited or performed behavior of the Venture class
             exhibit miningFrigateStates {
+                in ship = miningFrigateVentureClass;
                 in shipCommandPort = podPort;
                 in shipWarpBubbleEnd = warpBubbleEnd;
             }
@@ -89,6 +92,7 @@
 
         //Venture class Behavior redefines imperial spaceship behavior with own technology 
         state miningFrigateStates :> imperialStandardShipStates {
+            in ship : MiningFrigateVentureClass;
             in shipCommandPort : PodPort;
             in shipWarpBubbleEnd : Boolean;
 
@@ -139,7 +143,7 @@
                 action :>> diagnoseRig; 
                 action :>> enableRig;
             }
-            action :>> executeWarpDrive {
+            action :>> prepareForWarp {
                 in warpCommandPort : PodPort;
                 in warpBubbleEnd : CelestialSignature;
                 in atRange : Real;
@@ -224,6 +228,7 @@
         
             //Exhibited or performed behavior of the spaceshihp
             exhibit highSecMiningFrigateStates {
+                in ship = highSecMiningFrigate;
                 in shipCommandPort = highSecMiningFrigate.podPort;
                 in shipWarpBubbleEnd = highSecMiningFrigate.warpBubbleEnd;
             }
@@ -315,6 +320,7 @@
 
             //Exhibited or performed behavior of the spaceshihp
             exhibit lowSecMiningFrigateStates {
+                in ship = lowSecMiningFrigate;
                 in shipCommandPort = lowSecMiningFrigate.podPort;
                 in shipWarpBubbleEnd = lowSecMiningFrigate.warpBubbleEnd;
             }
@@ -428,6 +434,7 @@
             
             //Exhibited or performed behavior of the spaceshihp
             exhibit nullSecMiningFrigateStates {
+                in ship = nullSecMiningFrigate;
                 in shipCommandPort = nullSecMiningFrigate.podPort;
                 in shipWarpBubbleEnd = nullSecMiningFrigate.warpBubbleEnd;
             }
@@ -467,7 +474,6 @@
             }
         }
     }
-
     package DependenciesToUseCases {
         doc/*
         * trace the activities identified in the Operational Use Cases with the activities defined 
@@ -482,7 +488,7 @@
             to SystemUseCases::MineAsteroids::highSecMiningFrigate::activateMiningLaser;
         dependency MinigFrigateConfigurations::highSecMiningFrigate::highSecMiningFrigateStates::initializeScanSpaceServices::directionalScan
             to SystemUseCases::MonitorAndDetectThreats::highSecMiningFrigate::scanSpace;
-        dependency MinigFrigateConfigurations::highSecMiningFrigate::highSecMiningFrigateStates::executeWarpDrive
+        dependency MinigFrigateConfigurations::highSecMiningFrigate::highSecMiningFrigateStates::prepareForWarp
             to SystemUseCases::WarpToCelestial::highSecMiningFrigate::executeWarpDrive;
         dependency MinigFrigateConfigurations::highSecMiningFrigate::highSecMiningFrigateStates::initializeNavigationServices::approachSignatureAtRange
             to SystemUseCases::ApproachSignature::highSecMiningFrigate::approachSignature;
@@ -493,8 +499,7 @@
         dependency MinigFrigateConfigurations::highSecMiningFrigate::highSecMiningFrigateStates::transferOre
             to SystemUseCases::TransferOre;
     }
-    
-    package ViesAndViewDefinitions {
+    package ViewsAndViewDefinitions {
 
         private import VariationDefinition;
     

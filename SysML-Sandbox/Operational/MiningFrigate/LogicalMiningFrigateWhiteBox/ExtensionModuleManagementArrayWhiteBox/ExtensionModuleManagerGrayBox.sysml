@@ -17,7 +17,7 @@ package ExtensionModuleManagerGrayBox {
 
                 action def LogicalInitializeExtensionModule {
                     doc /*
-                        * Initialize the extension modules of the ship as per the ship configuration
+                        * Initialize the extension modules of the ship.
                         */
                     in muxDeMuxPort : ~LogicalModuleCommandPort;
                     in extensionSlotPort : LogicalModuleCommandPort;
@@ -31,15 +31,14 @@ package ExtensionModuleManagerGrayBox {
                         else stop;
                     action stop terminate;
                     then action logicalDiagnoseModule {
-                        out moduleReport : LogicalModuleReport;
-                        //reports back name of the module, overheat, cycle time
+                        out moduleReport : LogicalModuleReport; //reports back name of the module, overheat, cycle time
+                        in providedModuleCommand : ModuleToggleCommand; //provides the ModuleToggleCommand for this module
                     }
-                    then action logicalEnableModuleServices {
-                        
-                    }
+                    then action logicalEnableModuleServices;
                     then action acceptLogicalModuleCommand accept LogicalModuleToggleCommand via muxDeMuxPort.moduleToggleCommand;
                     then action generateModuleCommand {
                         in logicalModuleCommand = acceptLogicalModuleCommand;
+                        in providedModuleCommand = logicalDiagnoseModule.providedModuleCommand;
                         out moduleCommand;
                     }
                     then send generateModuleCommand.moduleCommand via extensionSlotPort.moduleToggleCommand; 
@@ -56,7 +55,7 @@ package ExtensionModuleManagerGrayBox {
             port extensionSlotProxyPort :>> extensionSlotPort;
             port muxDeMuxProxyPort :>> muxDeMuxPort;
 
-            action logicalInitializeExtensionModule1 : LogicalInitializeExtensionModule {
+            perform action logicalInitializeExtensionModule1 : LogicalInitializeExtensionModule {
                 in muxDeMuxPort : ~LogicalModuleCommandPort = muxDeMuxProxyPort;
                 in extensionSlotPort : LogicalModuleCommandPort = extensionSlotProxyPort;
             }                 
@@ -65,7 +64,7 @@ package ExtensionModuleManagerGrayBox {
             port extensionSlotProxyPort :>> extensionSlotPort;
             port muxDeMuxProxyPort :>> muxDeMuxPort;
 
-            action logicalInitializeExtensionModule2 : LogicalInitializeExtensionModule {
+            perform action logicalInitializeExtensionModule2 : LogicalInitializeExtensionModule {
                 in muxDeMuxPort : ~LogicalModuleCommandPort = muxDeMuxProxyPort;
                 in extensionSlotPort : LogicalModuleCommandPort = extensionSlotProxyPort;
             } 
@@ -73,8 +72,8 @@ package ExtensionModuleManagerGrayBox {
         part extensionModuleManager3GrayBox :> extensionModuleManagerGrayBox {
             port extensionSlotProxyPort :>> extensionSlotPort;
             port muxDeMuxProxyPort :>> muxDeMuxPort;
-            
-            action logicalInitializeExtensionModule3 : LogicalInitializeExtensionModule {
+
+            perform action logicalInitializeExtensionModule3 : LogicalInitializeExtensionModule {
                 in muxDeMuxPort : ~LogicalModuleCommandPort = muxDeMuxProxyPort;
                 in extensionSlotPort : LogicalModuleCommandPort = extensionSlotProxyPort;
             } 
@@ -83,7 +82,7 @@ package ExtensionModuleManagerGrayBox {
             port extensionSlotProxyPort :>> extensionSlotPort;
             port muxDeMuxProxyPort :>> muxDeMuxPort;
 
-            action logicalInitializeExtensionModule4 : LogicalInitializeExtensionModule {
+            perform action logicalInitializeExtensionModule4 : LogicalInitializeExtensionModule {
                 in muxDeMuxPort : ~LogicalModuleCommandPort = muxDeMuxProxyPort;
                 in extensionSlotPort : LogicalModuleCommandPort = extensionSlotProxyPort;
             } 
@@ -92,7 +91,7 @@ package ExtensionModuleManagerGrayBox {
             port extensionSlotProxyPort :>> extensionSlotPort;
             port muxDeMuxProxyPort :>> muxDeMuxPort;
 
-            action logicalInitializeExtensionModule5 : LogicalInitializeExtensionModule {
+            perform action logicalInitializeExtensionModule5 : LogicalInitializeExtensionModule {
                 in muxDeMuxPort : ~LogicalModuleCommandPort = muxDeMuxProxyPort;
                 in extensionSlotPort : LogicalModuleCommandPort = extensionSlotProxyPort;
             }
@@ -101,7 +100,7 @@ package ExtensionModuleManagerGrayBox {
             port extensionSlotProxyPort :>> extensionSlotPort;
             port muxDeMuxProxyPort :>> muxDeMuxPort;
 
-            action logicalInitializeExtensionModule6 : LogicalInitializeExtensionModule {
+            perform action logicalInitializeExtensionModule6 : LogicalInitializeExtensionModule {
                 in muxDeMuxPort : ~LogicalModuleCommandPort = muxDeMuxProxyPort;
                 in extensionSlotPort : LogicalModuleCommandPort = extensionSlotProxyPort;
             }
@@ -110,7 +109,7 @@ package ExtensionModuleManagerGrayBox {
             port extensionSlotProxyPort :>> extensionSlotPort;
             port muxDeMuxProxyPort :>> muxDeMuxPort;
 
-            action logicalInitializeExtensionModule7 : LogicalInitializeExtensionModule {
+            perform action logicalInitializeExtensionModule7 : LogicalInitializeExtensionModule {
                 in muxDeMuxPort : ~LogicalModuleCommandPort = muxDeMuxProxyPort;
                 in extensionSlotPort : LogicalModuleCommandPort = extensionSlotProxyPort;
             } 

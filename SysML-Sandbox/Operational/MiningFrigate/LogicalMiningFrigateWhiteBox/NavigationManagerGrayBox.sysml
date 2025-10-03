@@ -13,6 +13,9 @@ package NavigationManagerGrayBox {
             doc /*
                 * Executes navigation commands received from the controller
                 */
+
+            attribute alignTime :>> alignTime default 5.99;
+
             port :>> commandNetworkPort : ~LogicalShipCommandPort;
             port :>> mainPropulsorAnalogPort : LogicalAnalogPort;
             port :>> zdirectionalPropulsorAnalogPort : LogicalAnalogPort;
@@ -36,7 +39,7 @@ package NavigationManagerGrayBox {
                 port lowPowerSupplyUnitPort :>> lowPowerLinePort;
 
                 perform logicalInitializeNavigationServices {
-                    in commandNetworkProxyPort : ~LogicalShipCommandPort;
+                    in commandNetworkPort : ~LogicalShipCommandPort;
                     out mainPropulsorControl : LogicalAnalogSignal;
                     out zdirectionalPropulsorControl : LogicalAnalogSignal;
                     out ydirectionalPropulsorControl : LogicalAnalogSignal;
@@ -78,10 +81,6 @@ package NavigationManagerGrayBox {
                     then logicalexecuteWarpDrive;
                     
                 action logicalApproachSignatureAtRange {
-                    in commandNetworkProxyPort : ~LogicalShipCommandPort;
-                    out mainPropulsorControl : LogicalAnalogSignal;
-                    out zdirectionalPropulsorControl : LogicalAnalogSignal;
-                    out ydirectionalPropulsorControl : LogicalAnalogSignal;
 
                     action acceptApproachSignatureCommand accept approachSignatureCommand : LogicalApproachSignatureCommand via commandNetworkProxyPort;
                     then action navigateToSignature {
@@ -114,18 +113,17 @@ package NavigationManagerGrayBox {
                     doc /*
                         * Executes the navigation maneuvres to initiate warp and activates the warp generator
                         */
-                    in logicalWarpCommandPort : LogicalShipCommandPort;
                     in warpBubbleEnd : LogicalCelestialSignature;
 
-                    action acceptwarpCommand accept logicalExecuteWarpCommand : LogicalExecuteWarpDriveCommand via logicalWarpCommandPort;
+                    action acceptwarpCommand accept logicalExecuteWarpCommand : LogicalExecuteWarpDriveCommand via commandNetworkProxyPort;
                     then action reportStatusWarpDrive {out shipReport : LogicalShipReport;}
-                    then send reportStatusWarpDrive.shipReport via logicalWarpCommandPort;
+                    then send reportStatusWarpDrive.shipReport via commandNetworkProxyPort;
                     then perform warpGenerator.warpToBubbleEnd {
                         in bubbleEnd = warpBubbleEnd; 
                         in destination = acceptwarpCommand.logicalExecuteWarpCommand.destinationSignature;
                     } 
                     then action reportStatusDestination {out shipReport : LogicalShipReport;}
-                    then send reportStatusDestination.shipReport via logicalWarpCommandPort;
+                    then send reportStatusDestination.shipReport via commandNetworkProxyPort;
                 }  
             }    
         }

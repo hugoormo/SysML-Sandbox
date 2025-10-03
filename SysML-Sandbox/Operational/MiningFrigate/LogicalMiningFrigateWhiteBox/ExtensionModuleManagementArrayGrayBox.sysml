@@ -52,7 +52,7 @@ package ExtensionModuleManagementArrayGrayBox {
                 port extensionModuleManager6Port :>> lowPowerLinePort;
                 port extensionModuleManager7Port :>> lowPowerLinePort;
                 
-                action logicalPowerUpextensionModuleManagerArray;
+                perform logicalInitializeExtensionModulesManagementArray.logicalPowerUpextensionModuleManagerArray;
             }
             
             abstract part extensionModuleManager[7] : LogicalPart {             
@@ -236,6 +236,7 @@ package ExtensionModuleManagementArrayGrayBox {
                     * Initializes the modules configured in the ship.
                     */
                 first start;
+                then action logicalPowerUpextensionModuleManagerArray;
                 then fork; 
                     then logicalInitializeDeMux;                  
                     then logicalInitializeExtensionModule1;
@@ -247,14 +248,6 @@ package ExtensionModuleManagementArrayGrayBox {
                     then logicalInitializeExtensionModule7; 
             
                 action logicalInitializeDeMux {
-                    in commandNetworkProxyPort : ~LogicalShipCommandPort;
-                    in extensionModule1ControlProxyPort : LogicalModuleCommandPort;
-                    in extensionModule2ControlProxyPort : LogicalModuleCommandPort;
-                    in extensionModule3ControlProxyPort : LogicalModuleCommandPort;
-                    in extensionModule4ControlProxyPort : LogicalModuleCommandPort;
-                    in extensionModule5ControlProxyPort : LogicalModuleCommandPort;
-                    in extensionModule6ControlProxyPort : LogicalModuleCommandPort;
-                    in extensionModule7ControlProxyPort : LogicalModuleCommandPort;
                     
                     first start;
                     then action logicalPowerUpDeMux;
@@ -268,38 +261,35 @@ package ExtensionModuleManagementArrayGrayBox {
                         then relayCommandsAndReports7;
                         action relayCommandsAndReports1 : RelayCommandsAndReports {
                             in commandNetworkPort  : LogicalModuleCommandPort = commandNetworkProxyPort.modulesCommandsSubPort.module1ToggleCommand;
-                            in extensionModuleControlCommandPort : LogicalModuleCommandPort = extensionModule1ControlProxyPort;
+                            in extensionModuleControlCommandPort : LogicalModuleCommandPort = module1ControlProxyPort;
                         }
                         action relayCommandsAndReports2 : RelayCommandsAndReports {
                             in commandNetworkPort  : LogicalModuleCommandPort = commandNetworkProxyPort.modulesCommandsSubPort.module2ToggleCommand;
-                            in extensionModuleControlCommandPort : LogicalModuleCommandPort = extensionModule2ControlProxyPort;
+                            in extensionModuleControlCommandPort : LogicalModuleCommandPort = module2ControlProxyPort;
                         }
                         action relayCommandsAndReports3 : RelayCommandsAndReports {
                             in commandNetworkPort  : LogicalModuleCommandPort = commandNetworkProxyPort.modulesCommandsSubPort.module3ToggleCommand;
-                            in extensionModuleControlCommandPort : LogicalModuleCommandPort = extensionModule3ControlProxyPort;
+                            in extensionModuleControlCommandPort : LogicalModuleCommandPort = module3ControlProxyPort;
                         }
                         action relayCommandsAndReports4 : RelayCommandsAndReports {
                             in commandNetworkPort  : LogicalModuleCommandPort = commandNetworkProxyPort.modulesCommandsSubPort.module4ToggleCommand;
-                            in extensionModuleControlCommandPort : LogicalModuleCommandPort = extensionModule4ControlProxyPort;
+                            in extensionModuleControlCommandPort : LogicalModuleCommandPort = module4ControlProxyPort;
                         }
                         action relayCommandsAndReports5 : RelayCommandsAndReports {
                             in commandNetworkPort  : LogicalModuleCommandPort = commandNetworkProxyPort.modulesCommandsSubPort.module5ToggleCommand;
-                            in extensionModuleControlCommandPort : LogicalModuleCommandPort = extensionModule5ControlProxyPort;
+                            in extensionModuleControlCommandPort : LogicalModuleCommandPort = module5ControlProxyPort;
                         }
                         action relayCommandsAndReports6 : RelayCommandsAndReports {
                             in commandNetworkPort  : LogicalModuleCommandPort = commandNetworkProxyPort.modulesCommandsSubPort.module6ToggleCommand;
-                            in extensionModuleControlCommandPort : LogicalModuleCommandPort = extensionModule6ControlProxyPort;
+                            in extensionModuleControlCommandPort : LogicalModuleCommandPort = module6ControlProxyPort;
                         }
                         action relayCommandsAndReports7 : RelayCommandsAndReports {
                             in commandNetworkPort  : LogicalModuleCommandPort = commandNetworkProxyPort.modulesCommandsSubPort.module7ToggleCommand;
-                            in extensionModuleControlCommandPort : LogicalModuleCommandPort = extensionModule7ControlProxyPort;
+                            in extensionModuleControlCommandPort : LogicalModuleCommandPort = module7ControlProxyPort;
                         }
                 }
 
-                action logicalInitializeExtensionModule1 : LogicalInitializeExtensionModule {
-                    in muxDeMuxPort : ~LogicalModuleCommandPort;
-                    in extensionSlotPort : LogicalModuleCommandPort;
-                }
+                action logicalInitializeExtensionModule1 : LogicalInitializeExtensionModule;
                 action logicalInitializeExtensionModule2 : LogicalInitializeExtensionModule;
                 action logicalInitializeExtensionModule3 : LogicalInitializeExtensionModule;
                 action logicalInitializeExtensionModule4 : LogicalInitializeExtensionModule;

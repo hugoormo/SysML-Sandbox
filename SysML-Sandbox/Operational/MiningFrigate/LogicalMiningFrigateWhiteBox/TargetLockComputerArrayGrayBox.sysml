@@ -41,38 +41,24 @@ package TargetLockComputerArrayGrayBox {
             }
 
             abstract part targetLockComputer[5] : LogicalPart {
-
                 port targetLockManagerPort : LogicalShipCommandPort;
                 port lowPowerSupplyUnitPort : ~LogicalLowPowerLinePort :>> lowPowerLinePort; 
 
-                action logicalEnableTargetingComputer {
-                    in logicalEnableTargetingComputerCommandPort : LogicalShipCommandPort;
-                    in turretSlot : LogicalAlignmentPort;
-                    out turretAlignment : LogicalAlignmentSignal;
-
-                    action acceptTargetSignature accept targetSignature : LogicalLockTarget via logicalEnableTargetingComputerCommandPort;
-                    then action targetLockSignature {
-                        in targetSignature = acceptTargetSignature.targetSignature.signatureGrid;
-                        out turretAligment = turretSlot.logicalAlignmentSignal;
-                    }
-                    then action logicalreportTargetLock {out shipReport : LogicalShipReport;}
-                    then send logicalreportTargetLock.shipReport via logicalEnableTargetingComputerCommandPort;
-                }
             }
             part targetLockComputer1 :> targetLockComputer {
-                action :>> logicalEnableTargetingComputer;
+                perform initializeTargetingComputers.logicalEnableTargetingComputer1;
             }
             part targetLockComputer2 :> targetLockComputer {
-                action :>> logicalEnableTargetingComputer;
+                perform initializeTargetingComputers.logicalEnableTargetingComputer2;
             }
             part targetLockComputer3 :> targetLockComputer {
-                action :>> logicalEnableTargetingComputer;
+                perform initializeTargetingComputers.logicalEnableTargetingComputer3;
             }
             part targetLockComputer4 :> targetLockComputer {
-                action :>> logicalEnableTargetingComputer;
+                perform initializeTargetingComputers.logicalEnableTargetingComputer4;
             }
             part targetLockComputer5 :> targetLockComputer {
-                action :>> logicalEnableTargetingComputer;
+                perform initializeTargetingComputers.logicalEnableTargetingComputer5;
             }
 
             part lowPowerWiring : LogicalPart {
@@ -115,22 +101,41 @@ package TargetLockComputerArrayGrayBox {
                 first start;
                 then action logicalPowerUpTrackingComputers;
                 then fork;
-                    then targetLockComputer1.logicalEnableTargetingComputer {
+                    then logicalEnableTargetingComputer1; 
+                    then logicalEnableTargetingComputer2;
+                    then logicalEnableTargetingComputer3;
+                    then logicalEnableTargetingComputer4;
+                    then logicalEnableTargetingComputer5;
+
+                    action logicalEnableTargetingComputer1 {
                         in logicalEnableTargetingComputerCommandPort = targetLockComputerArrayCommandPort;
                     }
-                    then targetLockComputer2.logicalEnableTargetingComputer {
+                    action logicalEnableTargetingComputer2 {
                         in logicalEnableTargetingComputerCommandPort = targetLockComputerArrayCommandPort;
                     }
-                    then targetLockComputer3.logicalEnableTargetingComputer {
+                    action logicalEnableTargetingComputer3 {
                         in logicalEnableTargetingComputerCommandPort = targetLockComputerArrayCommandPort;
                     }
-                    then targetLockComputer4.logicalEnableTargetingComputer {
+                    action logicalEnableTargetingComputer4 {
                         in logicalEnableTargetingComputerCommandPort = targetLockComputerArrayCommandPort;
                     }
-                    then targetLockComputer5.logicalEnableTargetingComputer {
+                    action logicalEnableTargetingComputer5 {
                         in logicalEnableTargetingComputerCommandPort = targetLockComputerArrayCommandPort;
                     }
             }
+            action def logicalEnableTargetingComputer {
+                    in logicalEnableTargetingComputerCommandPort : LogicalShipCommandPort;
+                    in turretSlot : LogicalAlignmentPort;
+                    out turretAlignment : LogicalAlignmentSignal;
+
+                    action acceptTargetSignature accept targetSignature : LogicalLockTarget via logicalEnableTargetingComputerCommandPort;
+                    then action targetLockSignature {
+                        in targetSignature = acceptTargetSignature.targetSignature.signatureGrid;
+                        out turretAligment = turretSlot.logicalAlignmentSignal;
+                    }
+                    then action logicalreportTargetLock {out shipReport : LogicalShipReport;}
+                    then send logicalreportTargetLock.shipReport via logicalEnableTargetingComputerCommandPort;
+                }
         }
     }
 }

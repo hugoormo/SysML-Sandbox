@@ -21,11 +21,11 @@ package SystemUseCases {
                 accept activateMiningLaserCommand : ModuleToggleCommand;
                 then action reportOreHoldStatus {out shipReport : String;}
                 if highSecMiningFrigate.cargoHoldStatus == 1 {
-                    send ShipCommand(reportOreHoldStatus.shipReport) to pilotPod; //Mining report
+                    send reportOreHoldStatus.shipReport to pilotPod; //Mining report
                     then done;} //ore hold is full, interrupt mining.
                 //more actions will come here
                 then action reportStatusMining {out shipReport : String;}
-                then send ShipCommand(reportStatusMining.shipReport) to pilotPod; //Mining report
+                then send reportStatusMining.shipReport to pilotPod; //Mining report
             }
         } 
         actor pilotPod : PilotPod {
@@ -63,11 +63,11 @@ package SystemUseCases {
                 doc /*refreshes continuously the report of the signatures detected in grid*/
                     loop {
                         perform action cycleScanner {out scanReport : String;}
-                        then send ShipReport(cycleScanner.scanReport) to pilotPod; //grid scan report
+                        then send cycleScanner.scanReport to pilotPod; //grid scan report
                     }
                 }
                 action directionalScan {in range; in direction; in coneAngle; out scanReport : String;}
-                then send ShipReport(directionalScan.scanReport) to pilotPod; //directional scan report
+                then send directionalScan.scanReport to pilotPod; //directional scan report
             }
         }
         actor pilotPod : PilotPod {
@@ -123,17 +123,16 @@ package SystemUseCases {
                 accept ApproachSignatureCommand;
                 //more actions will come here
                 then action reportStatusApproach {out shipReport : String;}
-                then send ShipCommand(reportStatusApproach.shipReport) to pilotPod;//Approach in progress
+                then send reportStatusApproach.shipReport to pilotPod;//Approach in progress
             }
             then perform action dockInStation {
                 action requestDockingClearance {out ShipReport : String;}
-                then send ShipCommand(requestDockingClearance.ShipReport) to station;
+                then send requestDockingClearance.ShipReport to station;
                 then accept DockingRequestAccepted;
                 //more actions will come here
                 then action reportRequestAccepted {out shipReport : String;}
-                then send ShipCommand(reportRequestAccepted.shipReport) to pilotPod;//Approach in progress 
+                then send reportRequestAccepted.shipReport to pilotPod;//Approach in progress 
             }
-            timeslice inStation; 
         }
         actor pilotPod : PilotPod {
             event occurrence dockToStationSent;
@@ -168,10 +167,10 @@ package SystemUseCases {
                 accept ExecuteWarpDriveCommand;
                 //more actions will come here
                 then action reportStatusWarpDrive {out shipReport : String;}
-                then send ShipCommand(reportStatusWarpDrive.shipReport) to pilotPod; //warpDrive engaged
+                then send reportStatusWarpDrive.shipReport to pilotPod; //warpDrive engaged
                 //more actions will come here
                 then action reportStatusDestination {out shipReport : String;}
-                then send ShipCommand(reportStatusDestination.shipReport) to pilotPod; //Destination reached
+                then send reportStatusDestination.shipReport to pilotPod; //Destination reached
             }       
         }
         actor pilotPod : PilotPod {
@@ -202,7 +201,7 @@ package SystemUseCases {
                 accept ApproachSignatureCommand;
                 //more actions will come here
                 then action reportStatusApproach {out shipReport : String;}
-                then send ShipCommand(reportStatusApproach.shipReport) to pilotPod;//Approach in progress
+                then send reportStatusApproach.shipReport to pilotPod;//Approach in progress
             }          
         }
         actor pilotPod : PilotPod {

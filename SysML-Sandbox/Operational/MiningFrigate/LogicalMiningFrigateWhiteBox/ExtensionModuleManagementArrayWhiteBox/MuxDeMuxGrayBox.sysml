@@ -10,17 +10,8 @@ package MuxDeMuxGrayBox {
     part def ExtensionModulesManagementArrayWhiteBox :> ExtensionModulesManagementArrayGrayBox {
 
         part muxDeMuxGrayBox :> muxDeMux {
-                port :>> commandNetworkPort : ~LogicalShipCommandPort;
-                port :>> extensionModule1ControlPort : LogicalModuleCommandPort;
-                port :>> extensionModule2ControlPort : LogicalModuleCommandPort;
-                port :>> extensionModule3ControlPort : LogicalModuleCommandPort;
-                port :>> extensionModule4ControlPort : LogicalModuleCommandPort;
-                port :>> extensionModule5ControlPort : LogicalModuleCommandPort;
-                port :>> extensionModule6ControlPort : LogicalModuleCommandPort;
-                port :>> extensionModule7ControlPort : LogicalModuleCommandPort;
-                port :>> lowPowerSupplyUnitPort :>> lowPowerLinePort; 
 
-                action logicalInitializeDeMux {
+                action logicalInitializeMuxDeMux {
                     in commandNetworkProxyPort : ~LogicalShipCommandPort;
                     in extensionModule1ControlProxyPort : LogicalModuleCommandPort;
                     in extensionModule2ControlProxyPort : LogicalModuleCommandPort;
@@ -31,7 +22,7 @@ package MuxDeMuxGrayBox {
                     in extensionModule7ControlProxyPort : LogicalModuleCommandPort;
                     
                     first start;
-                    then action logicalPowerUpDeMux;
+                    then perform action logicalPowerUpDeMux;
                     then fork;
                         then relayCommandsAndReports1;
                         then relayCommandsAndReports2;
@@ -40,31 +31,32 @@ package MuxDeMuxGrayBox {
                         then relayCommandsAndReports5;
                         then relayCommandsAndReports6;
                         then relayCommandsAndReports7;
-                        action relayCommandsAndReports1 : RelayCommandsAndReports {
-                            in commandNetworkPort  : LogicalModuleCommandPort = commandNetworkProxyPort.modulesCommandsSubPort.module1ToggleCommand;
-                            in extensionModuleControlCommandPort : LogicalModuleCommandPort = extensionModule1ControlProxyPort;
+
+                        perform action relayCommandsAndReports1 : RelayCommandsAndReports {
+                            in :>> commandNetworkPort  : LogicalModuleCommandPort = commandNetworkProxyPort.modulesCommandsSubPort.module1ToggleCommand;
+                            in :>> extensionModuleControlCommandPort : LogicalModuleCommandPort = extensionModule1ControlProxyPort;
                         }
-                        action relayCommandsAndReports2 : RelayCommandsAndReports {
+                        perform action relayCommandsAndReports2 : RelayCommandsAndReports {
                             in commandNetworkPort  : LogicalModuleCommandPort = commandNetworkProxyPort.modulesCommandsSubPort.module2ToggleCommand;
                             in extensionModuleControlCommandPort : LogicalModuleCommandPort = extensionModule2ControlProxyPort;
                         }
-                        action relayCommandsAndReports3 : RelayCommandsAndReports {
+                        perform action relayCommandsAndReports3 : RelayCommandsAndReports {
                             in commandNetworkPort  : LogicalModuleCommandPort = commandNetworkProxyPort.modulesCommandsSubPort.module3ToggleCommand;
                             in extensionModuleControlCommandPort : LogicalModuleCommandPort = extensionModule3ControlProxyPort;
                         }
-                        action relayCommandsAndReports4 : RelayCommandsAndReports {
+                        perform action relayCommandsAndReports4 : RelayCommandsAndReports {
                             in commandNetworkPort  : LogicalModuleCommandPort = commandNetworkProxyPort.modulesCommandsSubPort.module4ToggleCommand;
                             in extensionModuleControlCommandPort : LogicalModuleCommandPort = extensionModule4ControlProxyPort;
                         }
-                        action relayCommandsAndReports5 : RelayCommandsAndReports {
+                        perform action relayCommandsAndReports5 : RelayCommandsAndReports {
                             in commandNetworkPort  : LogicalModuleCommandPort = commandNetworkProxyPort.modulesCommandsSubPort.module5ToggleCommand;
                             in extensionModuleControlCommandPort : LogicalModuleCommandPort = extensionModule5ControlProxyPort;
                         }
-                        action relayCommandsAndReports6 : RelayCommandsAndReports {
+                        perform action relayCommandsAndReports6 : RelayCommandsAndReports {
                             in commandNetworkPort  : LogicalModuleCommandPort = commandNetworkProxyPort.modulesCommandsSubPort.module6ToggleCommand;
                             in extensionModuleControlCommandPort : LogicalModuleCommandPort = extensionModule6ControlProxyPort;
                         }
-                        action relayCommandsAndReports7 : RelayCommandsAndReports {
+                        perform action relayCommandsAndReports7 : RelayCommandsAndReports {
                             in commandNetworkPort  : LogicalModuleCommandPort = commandNetworkProxyPort.modulesCommandsSubPort.module7ToggleCommand;
                             in extensionModuleControlCommandPort : LogicalModuleCommandPort = extensionModule7ControlProxyPort;
                         }
@@ -72,22 +64,20 @@ package MuxDeMuxGrayBox {
                 action def RelayCommandsAndReports {          
                     in commandNetworkPort : LogicalModuleCommandPort; 
                     in extensionModuleControlCommandPort : LogicalModuleCommandPort;      
-                    
-                    first start;
-                    then fork;
-                        action acceptShipCommand accept commandNetworkShipCommand : LogicalControlCommand via commandNetworkPort ;
-                        then action verifyControlCommand {
-                            in command = acceptShipCommand.commandNetworkShipCommand;
-                            out verifiedCommand;
-                        }
-                        then send verifyControlCommand.verifiedCommand via extensionModuleControlCommandPort;
 
-                        action acceptShipReport accept commandNetworkShipReport : LogicalControlCommand via extensionModuleControlCommandPort;
-                        then action verifyReport {
-                            in report = acceptShipReport.commandNetworkShipReport;
-                            out verifiredReport = extensionModuleControlCommandPort;
-                        }
-                        then send verifyReport.verifiredReport via commandNetworkPort ;
+                    action acceptShipCommand accept commandNetworkShipCommand : LogicalControlCommand via commandNetworkPort ;
+                    then action verifyControlCommand {
+                        in command = acceptShipCommand.commandNetworkShipCommand;
+                        out verifiedCommand;
+                    }
+                    then send verifyControlCommand.verifiedCommand via extensionModuleControlCommandPort;
+                    
+                    action acceptShipReport accept commandNetworkShipReport : LogicalControlCommand via extensionModuleControlCommandPort;
+                    then action verifyReport {
+                        in report = acceptShipReport.commandNetworkShipReport;
+                        out verifiredReport = extensionModuleControlCommandPort;
+                    }
+                    then send verifyReport.verifiredReport via commandNetworkPort ;
                 }
         }
     }

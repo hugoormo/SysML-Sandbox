@@ -45,7 +45,8 @@ package PilotPodsAndSpaceships {
         enum Battlecruiser;
         enum Battleship;
     }
-    
+    part imperialStandardShip : ImperialStandardShip;
+
     //Imperial Standard Ship Blueprint
     abstract part def ImperialStandardShip :> CompositeSpaceshipComponent, EmittingMassiveObject {
 
@@ -84,6 +85,8 @@ package PilotPodsAndSpaceships {
         attribute warpCoreStrength : Integer;
         attribute maxLockedTargets : Integer;
         attribute sensorStrength : Integer;
+        attribute podDockedStatus : Boolean;
+        attribute shipDockedStatus : Boolean;
         
         //Modules and rigs extension ports
         port highPowerSlot : HighSlotPort[1..8];
@@ -109,6 +112,7 @@ package PilotPodsAndSpaceships {
 
         //Exhibited or performed behavior of the spaceshihp
         exhibit imperialStandardShipStates {
+            in ship = imperialStandardShip;
             in shipCommandPort = podPort;
             in shipWarpBubbleEnd = warpBubbleEnd;
         }
@@ -118,6 +122,7 @@ package PilotPodsAndSpaceships {
     state imperialStandardShipStates {
         doc /* All imperial compliant spaceships share a basic behavior. 
             */
+        in ship : ImperialStandardShip;
         in shipCommandPort : PodPort;
         in shipWarpBubbleEnd : Boolean;
 
@@ -142,17 +147,17 @@ package PilotPodsAndSpaceships {
         
         transition parked_to_boarded
             first Parked
-            accept boardShip : StationCommand via shipCommandPort
+            accept when imperialStandardShip.podDockedStatus == true
             then Boarded;
         
         transition boarded_to_parked
             first Boarded
-            accept unboardShip : StationCommand via shipCommandPort
+            accept when imperialStandardShip.podDockedStatus == false
             then Parked;
         
         transition boarded_to_inGrid
             first Boarded
-            accept pilotPodUndockCommandSig : ShipCommand via shipCommandPort
+            accept when imperialStandardShip.shipDockedStatus == false
             do action ::> startUpSequence {in shipServicesCommandPort = shipCommandPort;}
             then InGrid;  		
             
@@ -165,16 +170,13 @@ package PilotPodsAndSpaceships {
         transition inGrid_to_onWarp
             first InGrid
             accept warpCommandSig : ShipCommand via shipCommandPort
-            do action executeWarpDrive {
-                in warpCommandPort : PodPort;
-                in warpBubbleEnd : CelestialSignature;
-                in atRange : Real;
-            }
+            do action prepareForWarp
             then OnWarp;
     
         transition onWarp_to_inGrid
             first OnWarp
             accept when shipWarpBubbleEnd
+            do action restoreFromWarp
             then InGrid;     	   
     } 
     
@@ -309,7 +311,7 @@ package PilotPodsAndSpaceships {
             then action enableRig; //technology dependent actions will be added by the developers here.
     }
 
-    action executeWarpDrive {
+    action prepareForWarp {
         doc /* Engage the warp drive to travel to a celestial destination. 
         */
         in warpCommandPort : PodPort;

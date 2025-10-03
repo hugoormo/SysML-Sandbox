@@ -49,7 +49,8 @@ package PowerGridGrayBox {
                 port lowPowerSupplyUnitPort :>> lowPowerLinePort;
 
                 perform logicalInitializePowerGrid.monitorPowerInGrid {
-                    in energyIn : LogicalPowerSupply = energyStoreSupplyPort.powerGridEnergy;
+                    in energyStoreSupplyProxyPort : LogicalPowerSupply = energyStoreSupplyPort.powerGridEnergy;
+                    in shieldGeneratorGridProxyPort : LogicalPowerGridPort = shieldGeneratorGridPort;
                     out energyFlowback : LogicalPowerSupply = energyStoreFlowbackPort.powerGridEnergy;
                     out highPowerSlotCoupling1Energy : LogicalPowerSupply = highPowerSlotCoupling1GridPort.powerGridEnergy;
                     out highPowerSlotCoupling2Energy : LogicalPowerSupply = highPowerSlotCoupling2GridPort.powerGridEnergy;
@@ -57,7 +58,6 @@ package PowerGridGrayBox {
                     out midPowerSlotCoupling1Energy : LogicalPowerSupply = midPowerSlotCoupling1GridPort.powerGridEnergy;
                     out midPowerSlotCoupling2Energ: LogicalPowerSupply = midPowerSlotCoupling2GridPort.powerGridEnergy;
                     out midPowerSlotCoupling3Energy : LogicalPowerSupply = midPowerSlotCoupling3GridPort.powerGridEnergy;
-                    out shieldGeneratorGridPort : LogicalPowerSupply = shieldGeneratorGridPort;
                 }
             }
             
@@ -89,6 +89,7 @@ package PowerGridGrayBox {
                     */
                 
                 in energyIn : LogicalPowerSupply :>> energyIn;
+                in shieldGeneratorGridPort : LogicalPowerGridPort :>> shieldGeneratorGridPort;
                 out energyFlowback : LogicalPowerSupply :>> energyFlowback;
                 out highPowerSlotCoupling1Energy : LogicalPowerSupply :>> highPowerSlotCoupling1Energy;
                 out highPowerSlotCoupling2Energy : LogicalPowerSupply :>> highPowerSlotCoupling2Energy;
@@ -96,12 +97,12 @@ package PowerGridGrayBox {
                 out midPowerSlotCoupling1Energy : LogicalPowerSupply :>> midPowerSlotCoupling1Energy;
                 out midPowerSlotCoupling2Energy : LogicalPowerSupply :>> midPowerSlotCoupling2Energy;
                 out midPowerSlotCoupling3Energy : LogicalPowerSupply :>> midPowerSlotCoupling3Energy;
-                out shieldGeneratorGridPort : LogicalPowerSupply :>> shieldGeneratorGridPort;
                 
                 first start;
                 then action logicalPowerUpPowerGrid;
                 then action monitorPowerInGrid {
                     in energyIn : LogicalPowerSupply;
+                    in shieldGeneratorGridPort : LogicalPowerGridPort;
                     out energyFlowback : LogicalPowerSupply;
                     out highPowerSlotCoupling1Energy : LogicalPowerSupply;
                     out highPowerSlotCoupling2Energy : LogicalPowerSupply;
@@ -109,7 +110,7 @@ package PowerGridGrayBox {
                     out midPowerSlotCoupling1Energy : LogicalPowerSupply;
                     out midPowerSlotCoupling2Energ: LogicalPowerSupply;
                     out midPowerSlotCoupling3Energy : LogicalPowerSupply;
-                    out shieldGeneratorGridPort : LogicalPowerSupply;
+                    
                 }  
             }     
         }
