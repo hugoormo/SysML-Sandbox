@@ -20,7 +20,7 @@ package LogicalGrayBoxMiningFrigate {
     //Logical Mining Frigate
     part def LogicalGrayBoxMiningFrigateVentureClass :> MiningFrigateVentureClass {
         
-        attribute massShip :>> massShip default 1200000.0;
+        attribute massShip :>> massFrigate default 1200000.0;
         attribute suppliedPowerGrid :>> suppliedPowerGrid default 45;
         attribute suppliedCapacitor :>> suppliedCapacitor default 250.0;
         attribute suppliedCpu :>> suppliedCpu default 240;
@@ -412,7 +412,7 @@ package LogicalGrayBoxMiningFrigate {
                 */
             attribute alignTime :>> alignTime default 5.99;
 
-            assert constraint maneuverability2AlignmentConstraint {
+            assert constraint maneuverability2AlignmentConstraint : Maneuverability2AlignmentConstraint {
                 in maxAlignTime = alignTime;
                 in mass = massShip;
                 in yrotatorImpulse = yAxisRotator.maxImpulse;

@@ -29,7 +29,7 @@
 
             //the attributes of a spaceship are redefined for the Venture class with default values.
             //relevant attributes for the roll up calculation
-            attribute massShip :>> massShip default 1200000.0;          // Mass of the minig frigate hull (Kg)
+            attribute massFrigate :>> massShip default 1200000.0;          // Mass of the minig frigate hull (Kg)
             attribute suppliedPowerGrid :>> suppliedPowerGrid default 45;  //Available power Grid (MW)
             attribute suppliedCapacitor :>> suppliedCapacitor default 250.0;   //Capacity installed (GJ)
             attribute suppliedCpu :>> suppliedCpu default 240;  //Size of the CPU in theraflops (tf)
@@ -50,6 +50,26 @@
             attribute maxLockedTargets :>> maxLockedTargets default 5;   // Number, the maximum number of locked targets (STRQ07)
             attribute gravimetricSensorStrength :>> sensorStrength default 4;  //ability to lock in a signature
             #mop attribute yieldBonus : Real = 1;
+
+            assert constraint alignTime2structureStrenght : AlignTime2structureStrenght {
+                in maxShipAlignTime = alignTime;
+                in shipMass = massFrigate;
+                in shipStructureStrength = structureStrength;
+                in shipSustainableVelocity = maxVelocity;
+            }
+
+            constraint def AlignTime2structureStrenght {
+                doc /*
+                    * Relates the maximium sustainable velocity of the ship, 
+                    * its mass and structure strength to the align time.
+                    */
+                in maxShipAlignTime : Real;
+                in shipMass : Real;
+                in shipStructureStrength : Real;
+                in shipSustainableVelocity : Real;
+
+                //expression -> f(maxShipAlignTime, shipMass, shipStructureStrength, shipSustainableVelocity) => alignTime;
+            }
             
             //Ports of the mining frigate redefine the imperial ship definition
             //The Venture class has a defined number of slots.
