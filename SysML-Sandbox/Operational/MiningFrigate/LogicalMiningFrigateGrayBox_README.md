@@ -4,9 +4,9 @@
 
 `LogicalMiningFrigateGrayBox.sysml` defines the **logical architecture** for a mining frigate (Venture Class) in the context of an Eve Online corporation's mining operations. This SysML model provides a detailed blueprint for the internal structure, subsystem interactions, resource management, and operational behaviors of the mining frigate.
 
-![Mining Frigate Logical Architecture](Images\LogicalMiningFrigateGrayBox.png)
+![Mining Frigate Logical Architecture](Images/LogicalMiningFrigateGrayBox.png)
 
-![Mining Frigate Logical Architecture](Images\LogicalMiningFrigateGrayBoxStates.png)
+![Mining Frigate Logical Architecture](Images/LogicalMiningFrigateGrayBoxStates.png)
 
 ## Description
 
