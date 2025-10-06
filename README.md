@@ -26,6 +26,10 @@ The Frigate is defined following a recursive approach that uses Blackbox, Graybo
 
 # Further work: here is where you may like to contribute
 ...for instance with a transport ship.
+
+- Contributions should follow the SysMLv2 standard.
+- All contributions must comply with the MIT License.
+- Do not upload copyrighted EVE Online assets (images, sounds, etc.).
  
 ## Initiated by
 Hugo Ormo is an engineer who studied at ETSEIB in Barcelona. He works as a consultant at a global IT consulting company, focusing on the transformation of enterprises toward systems engineering and MBSE. He is a certified GfSE Level A, approved trainer by the GfSE and has been preparing candidates for the GfSE certification levels B and C since 2022. Voluntarily, he leads the UAF working group of GfSE and is a member of the UAF working group of OMG.
